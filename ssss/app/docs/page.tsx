@@ -154,9 +154,7 @@ wire_api = "responses"`,
 
       {/* Pricing Cards Banner */}
       <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0a13]">
-        <h3 className="text-xs font-mono font-medium text-slate-400 uppercase tracking-wider mb-4">
-          Supported Kiro CLI Models & Multipliers
-        </h3>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <div className="p-4 rounded-xl border border-purple-500/30 bg-[#090812]">
             <div className="flex items-center justify-between mb-2">
@@ -248,11 +246,10 @@ wire_api = "responses"`,
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <button
           onClick={() => setActiveTab("claude")}
-          className={`p-6 rounded-2xl border text-left transition-all ${
-            activeTab === "claude"
+          className={`p-6 rounded-2xl border text-left transition-all ${activeTab === "claude"
               ? "bg-white/[0.04] border-purple-500/40 text-white"
               : "bg-[#0b0a13] border-white/[0.08] hover:border-white/[0.2] text-slate-400"
-          }`}
+            }`}
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
@@ -275,11 +272,10 @@ wire_api = "responses"`,
 
         <button
           onClick={() => setActiveTab("codex")}
-          className={`p-6 rounded-2xl border text-left transition-all relative overflow-hidden ${
-            activeTab === "codex"
+          className={`p-6 rounded-2xl border text-left transition-all relative overflow-hidden ${activeTab === "codex"
               ? "bg-amber-950/20 border-amber-500/40 text-white"
               : "bg-[#0b0a13] border-white/[0.08] hover:border-amber-500/30 text-slate-400"
-          }`}
+            }`}
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
@@ -313,11 +309,10 @@ wire_api = "responses"`,
           <button
             key={platform}
             onClick={() => setOs(platform)}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-mono capitalize transition-all ${
-              os === platform
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-mono capitalize transition-all ${os === platform
                 ? "bg-white/10 text-white border border-white/20"
                 : "text-slate-400 hover:text-slate-200"
-            }`}
+              }`}
           >
             {platform === "mac" ? "macOS" : platform}
           </button>

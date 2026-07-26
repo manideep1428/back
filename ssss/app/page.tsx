@@ -111,7 +111,7 @@ function MessageSquareIcon(props: React.SVGProps<SVGSVGElement>) {
 export default function Page() {
   const { isSignedIn } = useUser()
   const [copied, setCopied] = useState(false)
-  const [activeTab, setActiveTab] = useState<"json" | "python" | "curl">("json")
+  const [activeTab, setActiveTab] = useState<"claude" | "stream" | "codex">("claude")
   const [agentCount, setAgentCount] = useState(7)
   const [simulating, setSimulating] = useState(false)
 
@@ -159,39 +159,38 @@ export default function Page() {
   }
 
   const codeExamples = {
-    json: `{
-  "gateway": "https://makethembroke.com/v1",
-  "makethembroke_key": "mb-live-9874a210x99",
-  "routing_policy": "cost_optimized_latency_shield",
-  "fallback_providers": ["anthropic", "openrouter", "openai"],
-  "rolling_limit": {
-    "max_cost_per_hour_usd": 5.00,
-    "hard_stop_on_budget": true
-  }
+    claude: `{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.makethembroke.com/v1/anthropic",
+    "ANTHROPIC_API_KEY": "mb-live-q2eqi0t8jf0w7ui6m0xj",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+  },
+  "permissions": {
+    "allow": [],
+    "deny": []
+  },
+  "model": "claude-opus-5",
+  "effortLevel": "max",
+  "skipDangerousModePermissionPrompt": true
 }`,
-    python: `import os
-from makethembroke import AgentGateway
-
-# Initialize unified gateway with single API key
-gateway = AgentGateway(
-    api_key=os.getenv("MAKETHEMBROKE_API_KEY"),
-    domain="makethembroke.com"
-)
-
-# Route requests automatically across models
-response = gateway.chat.completions.create(
-    model="agent-auto-select",
-    messages=[{"role": "user", "content": "Execute workflow..."}]
-)
-print("Tokens used:", response.usage.total_tokens)
-print("Real-time cost (INR):", response.cost_inr)`,
-    curl: `curl https://makethembroke.com/v1/chat/completions \\
-  -H "Authorization: Bearer mb-live-9874a210x99" \\
+    stream: `curl https://api.makethembroke.com/v1/anthropic \\
+  -H "Authorization: Bearer mb-live-q2eqi0t8jf0w7ui6m0xj" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "model": "auto-agent",
-    "messages": [{"role": "user", "content": "Run research pipeline"}]
-  }'`
+    "model": "claude-opus-5",
+    "messages": [{"role": "user", "content": "Execute agent workflow..."}],
+    "stream": true
+  }'`,
+    codex: `model_provider = "makethembroke"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
+disable_response_storage = true
+preferred_auth_method = "apikey"
+
+[model_providers.makethembroke]
+name = "makethembroke"
+base_url = "https://api.makethembroke.com/v1"
+wire_api = "responses"`
   }
 
   return (
@@ -314,34 +313,34 @@ print("Real-time cost (INR):", response.cost_inr)`,
                   {/* Code Tabs */}
                   <div className="flex items-center gap-1 bg-black/40 p-1 rounded-lg border border-white/5">
                     <button
-                      onClick={() => setActiveTab("json")}
+                      onClick={() => setActiveTab("claude")}
                       className={`px-3 py-1 text-xs rounded-md font-mono transition-colors ${
-                        activeTab === "json"
+                        activeTab === "claude"
                           ? "bg-purple-600/30 text-purple-200 border border-purple-500/30"
                           : "text-slate-400 hover:text-slate-200"
                       }`}
                     >
-                      request_options.json
+                      claude_settings.json
                     </button>
                     <button
-                      onClick={() => setActiveTab("python")}
+                      onClick={() => setActiveTab("stream")}
                       className={`px-3 py-1 text-xs rounded-md font-mono transition-colors ${
-                        activeTab === "python"
+                        activeTab === "stream"
                           ? "bg-purple-600/30 text-purple-200 border border-purple-500/30"
                           : "text-slate-400 hover:text-slate-200"
                       }`}
                     >
-                      agent_config.py
+                      anthropic_stream.sh
                     </button>
                     <button
-                      onClick={() => setActiveTab("curl")}
+                      onClick={() => setActiveTab("codex")}
                       className={`px-3 py-1 text-xs rounded-md font-mono transition-colors ${
-                        activeTab === "curl"
+                        activeTab === "codex"
                           ? "bg-purple-600/30 text-purple-200 border border-purple-500/30"
                           : "text-slate-400 hover:text-slate-200"
                       }`}
                     >
-                      curl_gateway.sh
+                      codex_config.toml
                     </button>
                   </div>
                 </div>
