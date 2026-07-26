@@ -516,13 +516,19 @@ export default function PricingPage() {
       <main className="max-w-7xl mx-auto px-6 pt-12 pb-24">
         {/* HERO SECTION */}
         <section className="text-center max-w-4xl mx-auto pt-6 pb-12">
-          {/* Limited Promo Tag */}
-          {!isExpired && (
-            <div className="inline-flex items-center gap-2 px-4.5 py-2 rounded-full border border-purple-500/50 bg-gradient-to-r from-purple-950/80 via-indigo-950/80 to-purple-950/80 text-xs font-mono font-bold text-purple-200 mb-6 backdrop-blur-md shadow-xl shadow-purple-950/60 ring-1 ring-purple-500/30 animate-pulse">
-              <ZapIcon className="w-4 h-4 text-amber-400 animate-spin" />
-              <span>🔥 NEW USER PROMO: STARTER TRIAL @ ₹19 FOR $10 CREDITS • EXPIRES IN <strong className="text-amber-300 font-bold">{timerText}</strong></span>
+          {/* High Traffic Demand Alert Banner */}
+          <div className="max-w-2xl mx-auto mb-8 p-4 rounded-2xl bg-amber-950/50 border border-amber-500/40 backdrop-blur-md shadow-xl text-center">
+            <div className="flex items-center justify-center gap-2 text-amber-300 font-mono text-xs font-bold uppercase tracking-wider mb-1.5">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+              </span>
+              <span>⚠️ EXPERIENCING EXTREMELY HIGH TRAFFIC & DEMAND</span>
             </div>
-          )}
+            <p className="text-slate-300 text-xs font-mono leading-relaxed max-w-xl mx-auto">
+              MakeThemBroke gateway capacity is under heavy load. Plan issuance & credit top-ups are temporarily <strong className="text-amber-300">SOLD OUT</strong>. We will notify you via email as soon as new capacity opens up.
+            </p>
+          </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight text-white font-heading leading-tight mb-6">
             Predictable INR pricing for <br className="hidden sm:inline" />
@@ -563,7 +569,7 @@ export default function PricingPage() {
           )}
         </section>
 
-        {/* PRICING CARDS GRID */}
+        {/* PRICING CARDS GRID (SOLD OUT SKELETON STATE) */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
           {plans.map((plan, index) => {
             const isPopular = plan.popular
@@ -572,55 +578,51 @@ export default function PricingPage() {
             return (
               <div
                 key={index}
-                className={`rounded-2xl p-6 border relative flex flex-col justify-between transition-all duration-300 ${
+                className={`rounded-2xl p-6 border relative flex flex-col justify-between transition-all duration-300 opacity-90 ${
                   plan.isTrial ? "pt-8 border-purple-500/70 shadow-2xl shadow-purple-950/70 ring-1 ring-purple-500/40" : ""
                 } ${
                   isPopular
                     ? "bg-gradient-to-b from-[#18142c] to-[#0c0a16] border-purple-500/60 shadow-2xl shadow-purple-950/60 ring-1 ring-purple-500/30 scale-[1.02]"
-                    : "bg-[#0b0a13] border-white/[0.08] hover:border-purple-500/30 hover:bg-[#0e0d17]"
+                    : "bg-[#0b0a13] border-white/[0.08]"
                 }`}
               >
-                {plan.isTrial && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-[90%] py-1.5 px-3 bg-purple-900 border border-purple-400/40 rounded-full text-[11px] font-mono font-medium text-purple-200 text-center tracking-wider uppercase flex items-center justify-center gap-1.5 z-20">
-                    <ZapIcon className="w-3.5 h-3.5 text-amber-300" />
-                    <span>🔥 LIMITED OFFER • EXPIRES IN <strong className="text-amber-300 font-bold">{timerText}</strong></span>
-                  </div>
-                )}
+                {/* Sold Out High Traffic Ribbon */}
+                <div className="absolute -top-3.5 right-4 px-3 py-1 bg-amber-950 border border-amber-500/50 rounded-full text-[10px] font-mono font-bold text-amber-300 uppercase tracking-widest flex items-center gap-1.5 shadow-lg z-20">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                  <span>SOLD OUT • HIGH TRAFFIC</span>
+                </div>
+
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <div className="w-8 h-8 rounded-lg bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-purple-400">
                       <SparklesIcon className="w-4 h-4" />
                     </div>
                     {plan.tag && (
-                      <span
-                        className={`text-[9px] font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
-                          isPopular
-                            ? "bg-purple-600 text-white border-purple-400"
-                            : "bg-purple-950/80 text-purple-300 border-purple-500/30"
-                        }`}
-                      >
-                        {plan.tag}
+                      <span className="text-[9px] font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border bg-amber-950/80 text-amber-300 border-amber-500/30">
+                        HIGH CAPACITY DEMAND
                       </span>
                     )}
                   </div>
 
                   <h3 className="text-xl font-medium text-white font-heading mb-1">{plan.name}</h3>
-                  <p className="text-xs text-slate-400 mb-6 h-10 leading-relaxed">{plan.description}</p>
+                  <p className="text-xs text-slate-400 mb-4 h-10 leading-relaxed">{plan.description}</p>
 
-                  {/* Price display */}
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-semibold text-white font-heading tracking-tight">
+                  {/* Price display with Skeleton Pulse */}
+                  <div className="mb-6 relative overflow-hidden p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                    <div className="flex items-baseline gap-2 mb-1">
+                      <span className="text-4xl font-semibold text-white font-heading tracking-tight opacity-50">
                         ₹{finalPrice}
                       </span>
                       <span className="text-sm font-mono text-slate-500 line-through">
                         {plan.originalPrice}
                       </span>
                     </div>
-                    <div className="text-xs text-purple-300 font-mono mt-1.5 font-semibold">
-                      Includes ${plan.creditsUsd} USD Credits
-                    </div>
-                    <div className="text-[10px] text-slate-400 font-mono mt-1 flex items-center justify-between border-t border-white/[0.05] pt-2">
+
+                    {/* Animated Skeleton overlay line */}
+                    <div className="h-3 w-3/4 bg-white/10 rounded animate-pulse mb-2" />
+                    <div className="h-2.5 w-1/2 bg-amber-500/20 rounded animate-pulse" />
+
+                    <div className="text-[10px] text-slate-400 font-mono mt-3 flex items-center justify-between border-t border-white/[0.05] pt-2">
                       <span>⚡ 5h limit: <strong className="text-amber-300">{plan.limit5h}</strong></span>
                       <span>📅 Weekly: <strong className="text-emerald-300">{plan.limitWeekly}</strong></span>
                     </div>
@@ -637,19 +639,17 @@ export default function PricingPage() {
                   </ul>
                 </div>
 
-                {/* Razorpay Action Button */}
+                {/* Sold Out Action Button */}
                 <div className="pt-4 border-t border-white/[0.05]">
                   <button
-                    onClick={() => handlePayment(plan)}
-                    disabled={processingPlan === plan.name}
-                    className={`w-full inline-flex items-center justify-center py-3 rounded-xl text-xs font-medium font-mono transition-all ${
-                      isPopular
-                        ? "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-950/50"
-                        : "bg-white/[0.06] hover:bg-white/[0.12] text-white border border-white/[0.08]"
-                    }`}
+                    disabled
+                    className="w-full inline-flex items-center justify-center py-3 rounded-xl text-xs font-mono font-bold bg-amber-950/60 text-amber-300 border border-amber-500/40 cursor-not-allowed uppercase tracking-wider"
                   >
-                    {processingPlan === plan.name ? "Processing Razorpay..." : `Get ${plan.name} @ ₹${finalPrice}`}
+                    <span>CAPACITY FULL • SOLD OUT</span>
                   </button>
+                  <p className="text-[10px] font-mono text-slate-500 text-center mt-2">
+                    We will email registered accounts when slots open.
+                  </p>
                 </div>
               </div>
             )
