@@ -112,8 +112,6 @@ export function getLiveKiroCredentials(): { authToken: string; profileArn: strin
   }
 
   let authToken = process.env.AUTH_TOKEN || process.env.KIRO_AUTH_TOKEN || process.env.BEARER_TOKEN || '';
-  return { authToken, profileArn };
-}
 
   try {
     const userHome = process.env.USERPROFILE || process.env.HOME || '';
