@@ -451,17 +451,15 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-[#060609] text-slate-100 selection:bg-purple-500/30 selection:text-purple-200 relative overflow-hidden font-sans">
-      {/* Background Neon Ambient Glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-gradient-to-b from-purple-900/25 via-indigo-900/15 to-transparent blur-[140px] pointer-events-none -z-10" />
-      <div className="absolute top-[800px] left-0 w-[500px] h-[500px] bg-purple-950/20 blur-[150px] pointer-events-none -z-10" />
-
+  return (
+    <div className="min-h-screen bg-[#060609] text-slate-100 selection:bg-purple-500/30 selection:text-purple-200 relative overflow-hidden font-sans">
       {/* Top Header Navigation */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#060609]/85 border-b border-white/[0.06] transition-all">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 p-[1px] shadow-lg shadow-purple-500/20 group-hover:shadow-purple-500/40 transition-all">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 p-[1px]">
               <div className="w-full h-full bg-[#0d0c15] rounded-[11px] flex items-center justify-center">
-                <CpuIcon className="w-5 h-5 text-purple-400 group-hover:scale-110 transition-transform" />
+                <CpuIcon className="w-5 h-5 text-purple-400" />
               </div>
             </div>
             <span className="font-semibold text-lg tracking-tight font-heading text-white">
@@ -489,7 +487,7 @@ export default function PricingPage() {
               <>
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-purple-600 hover:bg-purple-500 text-white transition-all shadow-md shadow-purple-900/30"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-purple-600 hover:bg-purple-500 text-white transition-all"
                 >
                   Dashboard
                 </Link>
@@ -503,7 +501,7 @@ export default function PricingPage() {
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-white text-slate-950 hover:bg-slate-200 transition-all shadow-md shadow-white/5 active:scale-95">
+                  <button className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-white text-slate-950 hover:bg-slate-200 transition-all active:scale-95">
                     Get started
                   </button>
                 </SignUpButton>
@@ -517,16 +515,13 @@ export default function PricingPage() {
         {/* HERO SECTION */}
         <section className="text-center max-w-4xl mx-auto pt-6 pb-12">
           {/* High Traffic Demand Alert Banner */}
-          <div className="max-w-2xl mx-auto mb-8 p-4 rounded-2xl bg-amber-950/50 border border-amber-500/40 backdrop-blur-md shadow-xl text-center">
-            <div className="flex items-center justify-center gap-2 text-amber-300 font-mono text-xs font-bold uppercase tracking-wider mb-1.5">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
-              </span>
-              <span>⚠️ EXPERIENCING EXTREMELY HIGH TRAFFIC & DEMAND</span>
+          <div className="max-w-2xl mx-auto mb-8 p-4 rounded-xl bg-[#0b0a13] border border-white/[0.08] text-center">
+            <div className="flex items-center justify-center gap-2 text-amber-400 font-mono text-xs font-medium uppercase tracking-wider mb-1">
+              <span className="w-2 h-2 rounded-full bg-amber-400" />
+              <span>High Traffic & Demand Notice</span>
             </div>
-            <p className="text-slate-300 text-xs font-mono leading-relaxed max-w-xl mx-auto">
-              MakeThemBroke gateway capacity is under heavy load. Plan issuance & credit top-ups are temporarily <strong className="text-amber-300">SOLD OUT</strong>. We will notify you via email as soon as new capacity opens up.
+            <p className="text-slate-400 text-xs font-mono leading-relaxed max-w-xl mx-auto">
+              Gateway capacity is currently under high demand. Plan top-ups are temporarily marked as <strong className="text-white font-semibold">SOLD OUT</strong>. Registered users will receive an email as soon as new capacity opens up.
             </p>
           </div>
 
@@ -539,7 +534,7 @@ export default function PricingPage() {
           </p>
 
           {/* Referral Code Promo Input */}
-          <div className="max-w-md mx-auto mb-8 p-4 rounded-2xl bg-purple-950/30 border border-purple-500/30 backdrop-blur-md shadow-xl">
+          <div className="max-w-md mx-auto mb-8 p-4 rounded-2xl bg-[#0b0a13] border border-white/[0.08]">
             <form onSubmit={handleApplyReferral} className="flex gap-2">
               <input
                 type="text"
@@ -563,42 +558,35 @@ export default function PricingPage() {
           </div>
 
           {successMessage && (
-            <div className="p-4 rounded-xl bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 font-mono text-sm mb-8 animate-bounce max-w-xl mx-auto">
-              🎉 {successMessage}
+            <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/20 text-emerald-300 font-mono text-sm mb-8 max-w-xl mx-auto">
+              {successMessage}
             </div>
           )}
         </section>
 
-        {/* PRICING CARDS GRID (SOLD OUT SKELETON STATE) */}
+        {/* PRICING CARDS GRID */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
           {plans.map((plan, index) => {
-            const isPopular = plan.popular
             const finalPrice = appliedDiscount > 0 ? Math.max(1, Math.round(plan.amountNumber * (1 - appliedDiscount / 100))) : plan.amountNumber
 
             return (
               <div
                 key={index}
-                className={`rounded-2xl p-6 border relative flex flex-col justify-between transition-all duration-300 opacity-90 ${
-                  plan.isTrial ? "pt-8 border-purple-500/70 shadow-2xl shadow-purple-950/70 ring-1 ring-purple-500/40" : ""
-                } ${
-                  isPopular
-                    ? "bg-gradient-to-b from-[#18142c] to-[#0c0a16] border-purple-500/60 shadow-2xl shadow-purple-950/60 ring-1 ring-purple-500/30 scale-[1.02]"
-                    : "bg-[#0b0a13] border-white/[0.08]"
-                }`}
+                className="rounded-2xl p-6 border border-white/[0.08] bg-[#0b0a13] relative flex flex-col justify-between"
               >
-                {/* Sold Out High Traffic Ribbon */}
-                <div className="absolute -top-3.5 right-4 px-3 py-1 bg-amber-950 border border-amber-500/50 rounded-full text-[10px] font-mono font-bold text-amber-300 uppercase tracking-widest flex items-center gap-1.5 shadow-lg z-20">
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-                  <span>SOLD OUT • HIGH TRAFFIC</span>
+                {/* Sold Out Badge */}
+                <div className="absolute -top-3.5 right-4 px-3 py-1 bg-[#050508] border border-white/[0.08] rounded-full text-[10px] font-mono font-medium text-amber-400 uppercase tracking-widest flex items-center gap-1.5 z-20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  <span>SOLD OUT</span>
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-8 h-8 rounded-lg bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                    <div className="w-8 h-8 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-slate-300">
                       <SparklesIcon className="w-4 h-4" />
                     </div>
                     {plan.tag && (
-                      <span className="text-[9px] font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border bg-amber-950/80 text-amber-300 border-amber-500/30">
+                      <span className="text-[9px] font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border bg-white/[0.04] text-slate-400 border-white/[0.06]">
                         HIGH CAPACITY DEMAND
                       </span>
                     )}
@@ -607,10 +595,10 @@ export default function PricingPage() {
                   <h3 className="text-xl font-medium text-white font-heading mb-1">{plan.name}</h3>
                   <p className="text-xs text-slate-400 mb-4 h-10 leading-relaxed">{plan.description}</p>
 
-                  {/* Price display with Skeleton Pulse */}
-                  <div className="mb-6 relative overflow-hidden p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                  {/* Price display */}
+                  <div className="mb-6 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
                     <div className="flex items-baseline gap-2 mb-1">
-                      <span className="text-4xl font-semibold text-white font-heading tracking-tight opacity-50">
+                      <span className="text-4xl font-semibold text-white font-heading tracking-tight">
                         ₹{finalPrice}
                       </span>
                       <span className="text-sm font-mono text-slate-500 line-through">
@@ -618,13 +606,9 @@ export default function PricingPage() {
                       </span>
                     </div>
 
-                    {/* Animated Skeleton overlay line */}
-                    <div className="h-3 w-3/4 bg-white/10 rounded animate-pulse mb-2" />
-                    <div className="h-2.5 w-1/2 bg-amber-500/20 rounded animate-pulse" />
-
                     <div className="text-[10px] text-slate-400 font-mono mt-3 flex items-center justify-between border-t border-white/[0.05] pt-2">
-                      <span>⚡ 5h limit: <strong className="text-amber-300">{plan.limit5h}</strong></span>
-                      <span>📅 Weekly: <strong className="text-emerald-300">{plan.limitWeekly}</strong></span>
+                      <span>⚡ 5h limit: <strong className="text-slate-200">{plan.limit5h}</strong></span>
+                      <span>📅 Weekly: <strong className="text-slate-200">{plan.limitWeekly}</strong></span>
                     </div>
                   </div>
 
@@ -643,12 +627,12 @@ export default function PricingPage() {
                 <div className="pt-4 border-t border-white/[0.05]">
                   <button
                     disabled
-                    className="w-full inline-flex items-center justify-center py-3 rounded-xl text-xs font-mono font-bold bg-amber-950/60 text-amber-300 border border-amber-500/40 cursor-not-allowed uppercase tracking-wider"
+                    className="w-full inline-flex items-center justify-center py-3 rounded-xl text-xs font-mono font-medium bg-white/[0.04] text-slate-400 border border-white/[0.06] cursor-not-allowed uppercase tracking-wider"
                   >
                     <span>CAPACITY FULL • SOLD OUT</span>
                   </button>
                   <p className="text-[10px] font-mono text-slate-500 text-center mt-2">
-                    We will email registered accounts when slots open.
+                    Registered accounts will be emailed when capacity reopens.
                   </p>
                 </div>
               </div>
