@@ -452,33 +452,38 @@ export default function BillingPage() {
 
       {/* AVAILABLE PLANS SECTION */}
       <div className="space-y-6">
+        {/* High Traffic Demand Alert Banner */}
+        <div className="p-4 rounded-2xl bg-[#0b0a13] border border-amber-500/40 text-center shadow-lg shadow-amber-950/20">
+          <div className="flex items-center justify-center gap-2 text-amber-400 font-mono text-xs font-semibold uppercase tracking-wider mb-1">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            <span>High Traffic & Capacity Demand Notice</span>
+          </div>
+          <p className="text-slate-300 text-xs font-mono leading-relaxed max-w-xl mx-auto">
+            Gateway capacity is currently under high demand. Plan top-ups are temporarily marked as <strong className="text-amber-300 font-bold uppercase">SOLD OUT</strong>. <span className="text-amber-300 font-medium drop-shadow-[0_0_10px_rgba(251,191,36,0.7)]">Registered users will receive an email as soon as new capacity opens up.</span>
+          </p>
+        </div>
+
         <h2 className="text-xl font-medium text-white font-heading">Available plans</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {plans.map((plan, idx) => (
             <div
               key={idx}
-              className={`p-6 rounded-2xl border flex flex-col justify-between space-y-6 transition-all duration-200 relative ${
-                plan.isTrial
-                  ? "pt-8 border-purple-500/70 shadow-2xl shadow-purple-950/70 ring-1 ring-purple-500/40 bg-[#0c0a16]"
-                  : "border-white/[0.08] bg-[#0b0a13] hover:border-purple-500/30"
-              }`}
+              className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0a13] relative flex flex-col justify-between space-y-6"
             >
-              {plan.isTrial && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-[90%] py-1.5 px-3 bg-purple-900 border border-purple-400/40 rounded-full text-[11px] font-mono font-medium text-purple-200 text-center tracking-wider uppercase flex items-center justify-center gap-1.5 z-20">
-                  <ZapIcon className="w-3.5 h-3.5 text-amber-300" />
-                  <span>🔥 LIMITED OFFER • EXPIRES IN <strong className="text-amber-300 font-bold">{timerText}</strong></span>
-                </div>
-              )}
+              {/* Sold Out Badge */}
+              <div className="absolute -top-3.5 right-4 px-3 py-1 bg-[#050508] border border-amber-500/40 rounded-full text-[10px] font-mono font-medium text-amber-400 uppercase tracking-widest flex items-center gap-1.5 z-20 shadow-md">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                <span>SOLD OUT</span>
+              </div>
+
               <div className="space-y-4">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-medium text-white font-heading">{plan.name}</h3>
-                  {plan.tag && (
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase bg-white/[0.06] text-slate-400 border border-white/[0.08]">
-                      {plan.tag}
-                    </span>
-                  )}
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase bg-amber-950/60 text-amber-300 border border-amber-500/30 font-bold">
+                    HIGH DEMAND
+                  </span>
                 </div>
                 <p className="text-xs text-slate-400 leading-relaxed font-light">{plan.description}</p>
 
@@ -518,15 +523,17 @@ export default function BillingPage() {
                 </ul>
               </div>
 
-              {/* Action Button */}
+              {/* Sold Out Action Button */}
               <div className="pt-4 border-t border-white/[0.05]">
                 <button
-                  onClick={() => handlePayment(plan)}
-                  disabled={processingPlan === plan.name}
-                  className={`w-full py-3 rounded-xl text-xs font-medium font-mono transition-all ${plan.buttonColor}`}
+                  disabled
+                  className="w-full py-3 rounded-xl text-xs font-mono font-medium bg-white/[0.04] text-slate-400 border border-white/[0.06] cursor-not-allowed uppercase tracking-wider"
                 >
-                  {processingPlan === plan.name ? "Processing..." : plan.buttonText}
+                  <span>CAPACITY FULL • SOLD OUT</span>
                 </button>
+                <p className="text-[10px] font-mono text-slate-500 text-center mt-2">
+                  Registered accounts will be emailed when capacity reopens.
+                </p>
               </div>
             </div>
           ))}
