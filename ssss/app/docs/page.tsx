@@ -64,16 +64,39 @@ export function DocsContent() {
     },
     {
       num: "03",
-      title: "Configure Environment Variables",
-      desc: "Set MakeThemBroke's base URL and endpoint to route Claude Code.",
-      code: os === "windows"
-        ? `$env:ANTHROPIC_BASE_URL="https://api.makethembroke.com/v1"\n$env:ANTHROPIC_API_KEY="${activeKey}"`
-        : `export ANTHROPIC_BASE_URL="https://api.makethembroke.com/v1"\nexport ANTHROPIC_API_KEY="${activeKey}"`,
-      lang: os === "windows" ? "powershell" : "bash",
-      note: "Routes streaming requests to https://api.makethembroke.com/v1/anthropic.",
+      title: "Configure ~/.claude/settings.json or Environment Variables",
+      desc: "Add your MakeThemBroke gateway credentials directly into ~/.claude/settings.json or set environment variables.",
+      code: `{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.makethembroke.com/v1/anthropic",
+    "ANTHROPIC_API_KEY": "${activeKey}"
+  }
+}`,
+      lang: "json",
+      note: os === "windows"
+        ? `Or run in PowerShell: $env:ANTHROPIC_BASE_URL="https://api.makethembroke.com/v1/anthropic"; $env:ANTHROPIC_API_KEY="${activeKey}"`
+        : `Or run in Terminal: export ANTHROPIC_BASE_URL="https://api.makethembroke.com/v1/anthropic"; export ANTHROPIC_API_KEY="${activeKey}"`,
     },
     {
       num: "04",
+      title: "Model Selection (claude-opus-5 Default & Supported Models)",
+      desc: "MakeThemBroke defaults to claude-opus-5 (2.20x credits, 1M context). You can also specify claude-sonnet-5, claude-opus-4.8, gpt-5.6-sol, gpt-5.6-luna, or auto.",
+      code: `{
+  "default_model": "claude-opus-5",
+  "supported_models": [
+    "claude-opus-5",
+    "claude-sonnet-5",
+    "claude-opus-4.8",
+    "gpt-5.6-sol",
+    "gpt-5.6-luna",
+    "auto"
+  ]
+}`,
+      lang: "json",
+      note: "claude-opus-5 is the default model. Mention gpt-5.6-sol or gpt-5.6-luna in your request prompt or settings to route through GPT-5.6 models.",
+    },
+    {
+      num: "05",
       title: "Launch Claude Code Agent",
       desc: "Navigate to your project repository and launch Claude Code through MakeThemBroke.",
       code: "cd path/to/your-project\nclaude",
@@ -142,37 +165,90 @@ wire_api = "responses"`,
       {/* Pricing Cards Banner */}
       <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0a13]">
         <h3 className="text-xs font-mono font-medium text-slate-400 uppercase tracking-wider mb-4">
-          Live Model Pricing Schedule
+          Supported Kiro CLI Models & Multipliers
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-4 rounded-xl border border-white/[0.06] bg-[#08070e]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="p-4 rounded-xl border border-purple-500/30 bg-[#090812]">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-heading font-medium text-white">Opus 5</span>
-              <span className="text-[10px] font-mono text-slate-400 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
-                /v1/anthropic
+              <span className="text-sm font-heading font-medium text-white">claude-opus-5</span>
+              <span className="text-[10px] font-mono text-purple-300 px-2 py-0.5 rounded bg-purple-950/60 border border-purple-500/30 font-bold">
+                DEFAULT (2.20x)
               </span>
             </div>
             <p className="text-xs font-mono text-slate-400 leading-relaxed">
-              Input: <strong className="text-slate-200 font-semibold">$5.00</strong> / 1M tokens
+              Context: <strong className="text-slate-200">1M window</strong>
               <br />
-              Output: <strong className="text-slate-200 font-semibold">$25.00</strong> / 1M tokens
+              Routing: <strong className="text-purple-300">/v1/anthropic</strong>
             </p>
           </div>
 
-          <div className="p-4 rounded-xl border border-amber-500/20 bg-[#08070e] opacity-80 relative overflow-hidden">
+          <div className="p-4 rounded-xl border border-white/[0.06] bg-[#08070e]">
             <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-heading font-medium text-white">GPT-5.6-Sol</span>
-                <span className="text-[9px] font-mono text-amber-400 px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/30 uppercase tracking-wider font-bold">
-                  🚧 Under Construction
-                </span>
-              </div>
-              <span className="text-[10px] font-mono text-slate-500 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
-                /v1/openai
+              <span className="text-sm font-heading font-medium text-white">claude-sonnet-5</span>
+              <span className="text-[10px] font-mono text-slate-400 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                1.30x credits
               </span>
             </div>
-            <p className="text-xs font-mono text-slate-500 leading-relaxed">
-              Endpoint Status: <strong className="text-amber-400 font-semibold">FROZEN / COMING SOON</strong>
+            <p className="text-xs font-mono text-slate-400 leading-relaxed">
+              Context: <strong className="text-slate-200">1M window</strong>
+              <br />
+              Routing: <strong className="text-purple-300">/v1/anthropic</strong>
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl border border-white/[0.06] bg-[#08070e]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-heading font-medium text-white">claude-opus-4.8</span>
+              <span className="text-[10px] font-mono text-slate-400 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                2.20x credits
+              </span>
+            </div>
+            <p className="text-xs font-mono text-slate-400 leading-relaxed">
+              Context: <strong className="text-slate-200">1M window</strong>
+              <br />
+              Routing: <strong className="text-purple-300">/v1/anthropic</strong>
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl border border-white/[0.06] bg-[#08070e]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-heading font-medium text-white">gpt-5.6-sol</span>
+              <span className="text-[10px] font-mono text-amber-300 px-2 py-0.5 rounded bg-amber-950/40 border border-amber-500/20">
+                2.40x credits
+              </span>
+            </div>
+            <p className="text-xs font-mono text-slate-400 leading-relaxed">
+              Context: <strong className="text-slate-200">272k window</strong>
+              <br />
+              Routing: <strong className="text-amber-300">Supported</strong>
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl border border-white/[0.06] bg-[#08070e]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-heading font-medium text-white">gpt-5.6-luna</span>
+              <span className="text-[10px] font-mono text-emerald-400 px-2 py-0.5 rounded bg-emerald-950/40 border border-emerald-500/20">
+                0.60x credits
+              </span>
+            </div>
+            <p className="text-xs font-mono text-slate-400 leading-relaxed">
+              Context: <strong className="text-slate-200">272k window</strong>
+              <br />
+              Routing: <strong className="text-emerald-400">Economical</strong>
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl border border-white/[0.06] bg-[#08070e]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-heading font-medium text-white">auto</span>
+              <span className="text-[10px] font-mono text-slate-300 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                1.00x credits
+              </span>
+            </div>
+            <p className="text-xs font-mono text-slate-400 leading-relaxed">
+              Context: <strong className="text-slate-200">Dynamic</strong>
+              <br />
+              Routing: <strong className="text-slate-300">Optimal Task Choice</strong>
             </p>
           </div>
         </div>

@@ -39,11 +39,18 @@ loadEnvFile();
  * Maps client requested model ID to valid Kiro backend model
  */
 export function mapToKiroModelId(requestedModel?: string): string {
-  const defaultModel = process.env.MODEL_ID || 'gpt-5.6-sol';
+  const defaultModel = process.env.MODEL_ID || 'claude-opus-5';
   if (!requestedModel) return defaultModel;
-  if (requestedModel === 'gpt-5.6-sol' || requestedModel === 'claude-3-5-sonnet') {
-    return requestedModel;
-  }
+  const norm = requestedModel.toLowerCase().trim();
+
+  if (norm.includes('opus-5') || norm.includes('opus 5') || norm === 'claude-opus-5') return 'claude-opus-5';
+  if (norm.includes('sonnet-5') || norm.includes('sonnet 5') || norm === 'claude-sonnet-5') return 'claude-sonnet-5';
+  if (norm.includes('opus-4.8') || norm.includes('opus 4.8') || norm === 'claude-opus-4.8') return 'claude-opus-4.8';
+  if (norm.includes('sol') || norm === 'gpt-5.6-sol') return 'gpt-5.6-sol';
+  if (norm.includes('luna') || norm === 'gpt-5.6-luna') return 'gpt-5.6-luna';
+  if (norm.includes('terra') || norm === 'gpt-5.6-terra') return 'gpt-5.6-terra';
+  if (norm.includes('auto')) return 'auto';
+
   return defaultModel;
 }
 
