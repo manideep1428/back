@@ -64,26 +64,16 @@ export function DocsContent() {
     },
     {
       num: "03",
-      title: "Configure ~/.claude/settings.json or Environment Variables",
-      desc: "Add your MakeThemBroke gateway credentials directly into ~/.claude/settings.json or set environment variables.",
+      title: "Complete ~/.claude/settings.json Configuration",
+      desc: "Create or edit ~/.claude/settings.json in your home directory with all environment variables, default model, and supported model options in one single file.",
       code: `{
   "env": {
     "ANTHROPIC_BASE_URL": "https://api.makethembroke.com/v1/anthropic",
-    "ANTHROPIC_API_KEY": "${activeKey}"
-  }
-}`,
-      lang: "json",
-      note: os === "windows"
-        ? `Or run in PowerShell: $env:ANTHROPIC_BASE_URL="https://api.makethembroke.com/v1/anthropic"; $env:ANTHROPIC_API_KEY="${activeKey}"`
-        : `Or run in Terminal: export ANTHROPIC_BASE_URL="https://api.makethembroke.com/v1/anthropic"; export ANTHROPIC_API_KEY="${activeKey}"`,
-    },
-    {
-      num: "04",
-      title: "Model Selection (claude-opus-5 Default & Supported Models)",
-      desc: "MakeThemBroke defaults to claude-opus-5 (2.20x credits, 1M context). You can also specify claude-sonnet-5, claude-opus-4.8, gpt-5.6-sol, gpt-5.6-luna, or auto.",
-      code: `{
-  "default_model": "claude-opus-5",
-  "supported_models": [
+    "ANTHROPIC_API_KEY": "${activeKey}",
+    "MODEL_ID": "claude-opus-5"
+  },
+  "model": "claude-opus-5",
+  "available_models": [
     "claude-opus-5",
     "claude-sonnet-5",
     "claude-opus-4.8",
@@ -93,10 +83,12 @@ export function DocsContent() {
   ]
 }`,
       lang: "json",
-      note: "claude-opus-5 is the default model. Mention gpt-5.6-sol or gpt-5.6-luna in your request prompt or settings to route through GPT-5.6 models.",
+      note: os === "windows"
+        ? `Windows path: C:\\Users\\YOUR_USER\\.claude\\settings.json (or run in PowerShell: $env:ANTHROPIC_BASE_URL="https://api.makethembroke.com/v1/anthropic"; $env:ANTHROPIC_API_KEY="${activeKey}")`
+        : `Mac/Linux path: ~/.claude/settings.json (or run in Terminal: export ANTHROPIC_BASE_URL="https://api.makethembroke.com/v1/anthropic"; export ANTHROPIC_API_KEY="${activeKey}")`,
     },
     {
-      num: "05",
+      num: "04",
       title: "Launch Claude Code Agent",
       desc: "Navigate to your project repository and launch Claude Code through MakeThemBroke.",
       code: "cd path/to/your-project\nclaude",
