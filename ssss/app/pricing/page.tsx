@@ -451,8 +451,6 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-[#060609] text-slate-100 selection:bg-purple-500/30 selection:text-purple-200 relative overflow-hidden font-sans">
-  return (
-    <div className="min-h-screen bg-[#060609] text-slate-100 selection:bg-purple-500/30 selection:text-purple-200 relative overflow-hidden font-sans">
       {/* Top Header Navigation */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#060609]/85 border-b border-white/[0.06] transition-all">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
