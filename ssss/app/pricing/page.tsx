@@ -512,16 +512,11 @@ export default function PricingPage() {
       <main className="max-w-7xl mx-auto px-6 pt-12 pb-24">
         {/* HERO SECTION */}
         <section className="text-center max-w-4xl mx-auto pt-6 pb-12">
-          {/* High Traffic Demand Alert Banner - Only shown to signed-in users */}
-          {isSignedIn && (
-            <div className="max-w-2xl mx-auto mb-8 p-4 rounded-xl bg-[#0b0a13] border border-white/[0.08] text-center">
-              <div className="flex items-center justify-center gap-2 text-amber-400 font-mono text-xs font-medium uppercase tracking-wider mb-1">
-                <span className="w-2 h-2 rounded-full bg-amber-400" />
-                <span>High Traffic & Demand Notice</span>
-              </div>
-              <p className="text-slate-400 text-xs font-mono leading-relaxed max-w-xl mx-auto">
-                Gateway capacity is currently under high demand. Plan top-ups are temporarily marked as <strong className="text-white font-semibold">SOLD OUT</strong>. Registered users will receive an email as soon as new capacity opens up.
-              </p>
+          {/* Available Promo Tag */}
+          {!isExpired && (
+            <div className="inline-flex items-center gap-2 px-4.5 py-2 rounded-full border border-purple-500/50 bg-[#0c0a16] text-xs font-mono font-bold text-purple-200 mb-6 backdrop-blur-md">
+              <ZapIcon className="w-4 h-4 text-amber-400" />
+              <span>🔥 NEW USER PROMO: STARTER TRIAL @ ₹19 FOR $10 CREDITS • EXPIRES IN <strong className="text-amber-300 font-bold">{timerText}</strong></span>
             </div>
           )}
 
@@ -567,18 +562,20 @@ export default function PricingPage() {
         {/* PRICING CARDS GRID */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
           {plans.map((plan, index) => {
+            const isPopular = plan.popular
             const finalPrice = appliedDiscount > 0 ? Math.max(1, Math.round(plan.amountNumber * (1 - appliedDiscount / 100))) : plan.amountNumber
 
             return (
               <div
                 key={index}
-                className="rounded-2xl p-6 border border-white/[0.08] bg-[#0b0a13] relative flex flex-col justify-between"
+                className={`rounded-2xl p-6 border relative flex flex-col justify-between transition-all duration-300 ${
+                  plan.isTrial ? "pt-8 border-purple-500/70 bg-[#0c0a16]" : "border-white/[0.08] bg-[#0b0a13]"
+                }`}
               >
-                {/* Sold Out Badge (Only shown to signed-in users) */}
-                {isSignedIn && (
-                  <div className="absolute -top-3.5 right-4 px-3 py-1 bg-[#050508] border border-white/[0.08] rounded-full text-[10px] font-mono font-medium text-amber-400 uppercase tracking-widest flex items-center gap-1.5 z-20">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                    <span>SOLD OUT</span>
+                {plan.isTrial && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-[90%] py-1.5 px-3 bg-purple-900 border border-purple-400/40 rounded-full text-[11px] font-mono font-medium text-purple-200 text-center tracking-wider uppercase flex items-center justify-center gap-1.5 z-20">
+                    <ZapIcon className="w-3.5 h-3.5 text-amber-300" />
+                    <span>🔥 LIMITED OFFER • EXPIRES IN <strong className="text-amber-300 font-bold">{timerText}</strong></span>
                   </div>
                 )}
 
@@ -589,7 +586,7 @@ export default function PricingPage() {
                     </div>
                     {plan.tag && (
                       <span className="text-[9px] font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border bg-white/[0.04] text-slate-400 border-white/[0.06]">
-                        {isSignedIn ? "HIGH CAPACITY DEMAND" : plan.tag}
+                        {plan.tag}
                       </span>
                     )}
                   </div>
@@ -628,17 +625,17 @@ export default function PricingPage() {
                 {/* Action Button */}
                 <div className="pt-4 border-t border-white/[0.05]">
                   {isSignedIn ? (
-                    <>
-                      <button
-                        disabled
-                        className="w-full inline-flex items-center justify-center py-3 rounded-xl text-xs font-mono font-medium bg-white/[0.04] text-slate-400 border border-white/[0.06] cursor-not-allowed uppercase tracking-wider"
-                      >
-                        <span>CAPACITY FULL • SOLD OUT</span>
-                      </button>
-                      <p className="text-[10px] font-mono text-slate-500 text-center mt-2">
-                        Registered accounts will be emailed when capacity reopens.
-                      </p>
-                    </>
+                    <button
+                      onClick={() => handlePayment(plan)}
+                      disabled={processingPlan === plan.name}
+                      className={`w-full inline-flex items-center justify-center py-3 rounded-xl text-xs font-medium font-mono transition-all ${
+                        isPopular
+                          ? "bg-purple-600 hover:bg-purple-500 text-white"
+                          : "bg-white/[0.06] hover:bg-white/[0.12] text-white border border-white/[0.08]"
+                      }`}
+                    >
+                      {processingPlan === plan.name ? "Processing Razorpay..." : `Get ${plan.name} @ ₹${finalPrice}`}
+                    </button>
                   ) : (
                     <SignUpButton mode="modal">
                       <button className="w-full inline-flex items-center justify-center py-3 rounded-xl text-xs font-medium font-mono bg-purple-600 hover:bg-purple-500 text-white transition-all">

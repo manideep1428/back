@@ -309,9 +309,9 @@ export default {
 };
 
 console.log(`\n======================================================`);
-console.log(`🚀 MakeThemBroke Hono API Gateway Running (Bun)`);
-console.log(`🌐 Base URL            : http://localhost:${port}/v1`);
-console.log(`🤖 Anthropic Stream API: http://localhost:${port}/v1/anthropic`);
-console.log(`⚡ OpenAI Stream API   : http://localhost:${port}/v1/openai`);
+console.log(`🚀 MakeThemBroke Hono API Gateway Running`);
+console.log(`🌐 Hosted Domain       : https://api.makethembroke.com/v1`);
+console.log(`🤖 Anthropic Stream API: https://api.makethembroke.com/v1/anthropic`);
+console.log(`⚡ OpenAI Stream API   : https://api.makethembroke.com/v1/openai`);
 console.log(`📊 Convex DB Connected : ${convexUrl}`);
 console.log(`======================================================\n`);
