@@ -12,6 +12,7 @@ import type * as apiKeys from "../apiKeys.js";
 import type * as payments from "../payments.js";
 import type * as referrals from "../referrals.js";
 import type * as stats from "../stats.js";
+import type * as usage from "../usage.js";
 import type * as userStats from "../userStats.js";
 
 import type {
@@ -25,6 +26,7 @@ declare const fullApi: ApiFromModules<{
   payments: typeof payments;
   referrals: typeof referrals;
   stats: typeof stats;
+  usage: typeof usage;
   userStats: typeof userStats;
 }>;
 

@@ -97,6 +97,27 @@ async function handleProxyRequest(req: Request): Promise<Response> {
     );
   }
 
+  // Check if endpoint is under construction (Codex / OpenAI endpoint)
+  if (path.includes("/openai") || path.includes("/chat/completions")) {
+    return new Response(
+      JSON.stringify({
+        error: {
+          message: "Codex / OpenAI gateway endpoint is currently under construction and frozen. Please route requests through /v1/anthropic for Claude Code.",
+          type: "under_construction_error",
+          param: null,
+          code: "endpoint_under_construction",
+        },
+      }),
+      {
+        status: 503,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+      }
+    );
+  }
+
   // Check key and credit limits in Convex DB
   const validation = await validateKey(apiKey);
   if (!validation.valid) {

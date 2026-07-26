@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Authenticated, Unauthenticated } from "convex/react"
 import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs"
 import { useMutation } from "convex/react"
 import { api } from "@/convex/_generated/api"
@@ -84,7 +83,7 @@ function ZapIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export default function PricingPage() {
   const router = useRouter()
-  const { user } = useUser()
+  const { user, isSignedIn } = useUser()
   const recordPaymentMutation = useMutation(api.payments.recordPayment)
 
   const [processingPlan, setProcessingPlan] = useState<string | null>(null)
@@ -97,11 +96,14 @@ export default function PricingPage() {
     e.preventDefault()
     if (!referralCode.trim()) return
     const code = referralCode.trim().toUpperCase()
-    if (code.includes("10") || code.startsWith("INVITE") || code.startsWith("REF") || code === "FRIEND10") {
+    if (code.startsWith("REF60") || code.includes("60") || code === "FRIEND60" || code === "MAKETHEMBROKE60") {
+      setAppliedDiscount(60)
+      setDiscountMessage("🎉 60% OFF Referral Code Applied! Discount will be deducted at checkout (Max 3 uses per code).")
+    } else if (code.startsWith("INVITE10") || code.includes("10")) {
       setAppliedDiscount(10)
-      setDiscountMessage("🎉 Referral code applied! Extra 10% OFF will be deducted at checkout.")
+      setDiscountMessage("🎉 10% OFF Referral Code Applied!")
     } else {
-      setDiscountMessage("❌ Invalid code. Try FRIEND10 or INVITE10.")
+      setDiscountMessage("❌ Invalid or expired referral code. Try REF60 or FRIEND60.")
     }
   }
 
@@ -116,32 +118,55 @@ export default function PricingPage() {
     }
   }, [])
 
-  const plans = [
+  const [timeLeft, setTimeLeft] = useState({ hours: 5, minutes: 59, seconds: 59 })
+
+  useEffect(() => {
+    const STORAGE_KEY = "starter_promo_expiry_v1"
+    let expiryTime = localStorage.getItem(STORAGE_KEY)
+    if (!expiryTime) {
+      expiryTime = (Date.now() + 6 * 60 * 60 * 1000).toString()
+      localStorage.setItem(STORAGE_KEY, expiryTime)
+    }
+
+    const updateTimer = () => {
+      const now = Date.now()
+      const diff = Math.max(0, parseInt(expiryTime!) - now)
+
+      const h = Math.floor(diff / (1000 * 60 * 60))
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      const s = Math.floor((diff % (1000 * 60)) / 1000)
+
+      setTimeLeft({ hours: h, minutes: m, seconds: s })
+    }
+
+    updateTimer()
+    const timer = setInterval(updateTimer, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const isExpired = timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0
+  const timerText = `${String(timeLeft.hours).padStart(2, "0")}h ${String(timeLeft.minutes).padStart(2, "0")}m ${String(timeLeft.seconds).padStart(2, "0")}s`
+
+  const allPlans = [
     {
       name: "Starter Trial",
-      tag: "80% OFF • FIRST USERS",
+      tag: `🔥 90% OFF • EXPIRES IN ${timerText}`,
       description: "Trial plan for new developers. Includes $10 AI credits.",
-      inrPrice: "₹39",
+      inrPrice: "₹19",
       originalPrice: "₹199",
-      amountNumber: 39,
+      amountNumber: 19,
       creditsUsd: 10.00,
       limit5h: "$10",
       limitWeekly: "$100",
       popular: false,
-      buttonText: "Get Starter Trial @ ₹39",
-    },
-    {
-      name: "Builder",
-      tag: "80% OFF",
-      description: "Includes $30 AI credits with a $15 5h limit & $150 weekly allowance.",
-      inrPrice: "₹99",
-      originalPrice: "₹499",
-      amountNumber: 99,
-      creditsUsd: 30.00,
-      limit5h: "$15",
-      limitWeekly: "$150",
-      popular: false,
-      buttonText: "Get Builder @ ₹99",
+      isTrial: true,
+      bullets: [
+        "$10 / 5h - $100 / week included",
+        "90% OFF for first-time users",
+        "Access to GPT-5.6-Sol and Opus 5 model routes",
+        "Email support - 24h response",
+      ],
+      buttonText: "Get Starter Trial @ ₹19",
     },
     {
       name: "Pro",
@@ -154,6 +179,13 @@ export default function PricingPage() {
       limit5h: "$20",
       limitWeekly: "$250",
       popular: true,
+      bullets: [
+        "$20 / 5h - $250 / week included",
+        "Access to GPT-5.6-Sol and Opus 5 model routes",
+        "Recommended for everyday dev workflows",
+        "Higher output token limits",
+        "Priority email support - 12h response",
+      ],
       buttonText: "Get Pro @ ₹249",
     },
     {
@@ -167,6 +199,13 @@ export default function PricingPage() {
       limit5h: "$25",
       limitWeekly: "$400",
       popular: false,
+      bullets: [
+        "$25 / 5h - $400 / week included",
+        "Access to GPT-5.6-Sol and Opus 5 model routes",
+        "Recommended for heavy dev workflows",
+        "Higher output limits",
+        "Priority email support - 12h response",
+      ],
       buttonText: "Get Scale @ ₹499",
     },
     {
@@ -180,6 +219,13 @@ export default function PricingPage() {
       limit5h: "$30",
       limitWeekly: "$600",
       popular: false,
+      bullets: [
+        "$30 / 5h - $600 / week included",
+        "Access to GPT-5.6-Sol and Opus 5 model routes",
+        "Recommended for heavy dev workflows",
+        "Early access to advanced features",
+        "Priority access at peak traffic",
+      ],
       buttonText: "Get Ultra @ ₹999",
     },
     {
@@ -193,6 +239,14 @@ export default function PricingPage() {
       limit5h: "$35",
       limitWeekly: "$800",
       popular: false,
+      bullets: [
+        "$35 / 5h - $800 / week included",
+        "Access to GPT-5.6-Sol and Opus 5 model routes",
+        "Everything in Ultra",
+        "Highest output limits available",
+        "Dedicated onboarding",
+        "Priority email support - 12h response",
+      ],
       buttonText: "Get Power @ ₹1,999",
     },
     {
@@ -206,6 +260,14 @@ export default function PricingPage() {
       limit5h: "$45",
       limitWeekly: "$900",
       popular: false,
+      bullets: [
+        "$45 / 5h - $900 / week included",
+        "Access to GPT-5.6-Sol and Opus 5 model routes",
+        "Everything in Power",
+        "Large weekly included allocation",
+        "Designed for sustained coding-agent usage",
+        "Priority email support - 8h response",
+      ],
       buttonText: "Get Apex @ ₹3,999",
     },
     {
@@ -219,9 +281,19 @@ export default function PricingPage() {
       limit5h: "$50",
       limitWeekly: "$1,000",
       popular: false,
+      bullets: [
+        "$50 / 5h - $1,000 / week included",
+        "Access to GPT-5.6-Sol and Opus 5 model routes",
+        "Everything in Apex",
+        "Highest public included allocation",
+        "Team-scale API key capacity",
+        "Priority email support - 6h response",
+      ],
       buttonText: "Get Titan @ ₹7,999",
     },
   ]
+
+  const plans = isExpired ? allPlans.filter((p) => !p.isTrial) : allPlans
 
   const handlePayment = async (plan: typeof plans[0]) => {
     setProcessingPlan(plan.name)
@@ -335,39 +407,45 @@ export default function PricingPage() {
   const comparisonRows = [
     {
       feature: "INR Price (Special Promo)",
-      values: ["₹18/mo", "₹99/mo", "₹249/mo", "₹499/mo", "₹999/mo", "₹1,999/mo", "₹3,999/mo", "₹7,999/mo"],
+      values: isExpired
+        ? ["₹249/mo", "₹499/mo", "₹999/mo", "₹1,999/mo", "₹3,999/mo", "₹7,999/mo"]
+        : ["₹19/mo", "₹249/mo", "₹499/mo", "₹999/mo", "₹1,999/mo", "₹3,999/mo", "₹7,999/mo"],
     },
     {
       feature: "Original List Price",
-      values: ["₹199/mo", "₹499/mo", "₹999/mo", "₹1,999/mo", "₹3,999/mo", "₹7,999/mo", "₹15,999/mo", "₹31,999/mo"],
+      values: isExpired
+        ? ["₹999/mo", "₹1,999/mo", "₹3,999/mo", "₹7,999/mo", "₹15,999/mo", "₹31,999/mo"]
+        : ["₹199/mo", "₹999/mo", "₹1,999/mo", "₹3,999/mo", "₹7,999/mo", "₹15,999/mo", "₹31,999/mo"],
     },
     {
       feature: "AI Credits Included",
-      values: ["$10 Credits", "$30 Credits", "$80 Credits", "$180 Credits", "$400 Credits", "$900 Credits", "$2,000 Credits", "$4,500 Credits"],
+      values: isExpired
+        ? ["$80 Credits", "$180 Credits", "$400 Credits", "$900 Credits", "$2,000 Credits", "$4,500 Credits"]
+        : ["$10 Credits", "$80 Credits", "$180 Credits", "$400 Credits", "$900 Credits", "$2,000 Credits", "$4,500 Credits"],
     },
     {
       feature: "5-Hour Rolling Limit",
-      values: ["$10", "$15", "$20", "$25", "$30", "$35", "$45", "$50"],
+      values: isExpired
+        ? ["$20", "$25", "$30", "$35", "$45", "$50"]
+        : ["$10", "$20", "$25", "$30", "$35", "$45", "$50"],
     },
     {
       feature: "Weekly Allowance",
-      values: ["$100", "$150", "$250", "$400", "$600", "$800", "$900", "$1,000"],
-    },
-    {
-      feature: "API Keys Included",
-      values: ["10", "30", "80", "200", "450", "1,000", "2,500", "5,000"],
+      values: isExpired
+        ? ["$250", "$400", "$600", "$800", "$900", "$1,000"]
+        : ["$100", "$250", "$400", "$600", "$800", "$900", "$1,000"],
     },
     {
       feature: "GPT-5.6-Sol & Opus 5 Models",
-      values: [true, true, true, true, true, true, true, true],
+      values: isExpired ? [true, true, true, true, true, true] : [true, true, true, true, true, true, true],
     },
     {
       feature: "Usage Dashboard",
-      values: [true, true, true, true, true, true, true, true],
+      values: isExpired ? [true, true, true, true, true, true] : [true, true, true, true, true, true, true],
     },
     {
       feature: "Priority Routing",
-      values: [true, true, true, true, true, true, true, true],
+      values: isExpired ? [true, true, true, true, true, true] : [true, true, true, true, true, true, true],
     },
   ]
 
@@ -407,28 +485,30 @@ export default function PricingPage() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <Unauthenticated>
-              <SignInButton mode="modal">
-                <button className="text-sm font-medium text-slate-300 hover:text-white transition-colors px-3 py-2">
-                  Log in
-                </button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <button className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-white text-slate-950 hover:bg-slate-200 transition-all shadow-md shadow-white/5 active:scale-95">
-                  Get started
-                </button>
-              </SignUpButton>
-            </Unauthenticated>
-
-            <Authenticated>
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-purple-600 hover:bg-purple-500 text-white transition-all shadow-md shadow-purple-900/30"
-              >
-                Dashboard
-              </Link>
-              <UserButton />
-            </Authenticated>
+            {isSignedIn ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-purple-600 hover:bg-purple-500 text-white transition-all shadow-md shadow-purple-900/30"
+                >
+                  Dashboard
+                </Link>
+                <UserButton />
+              </>
+            ) : (
+              <>
+                <SignInButton mode="modal">
+                  <button className="text-sm font-medium text-slate-300 hover:text-white transition-colors px-3 py-2">
+                    Log in
+                  </button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <button className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-white text-slate-950 hover:bg-slate-200 transition-all shadow-md shadow-white/5 active:scale-95">
+                    Get started
+                  </button>
+                </SignUpButton>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -437,17 +517,19 @@ export default function PricingPage() {
         {/* HERO SECTION */}
         <section className="text-center max-w-4xl mx-auto pt-6 pb-12">
           {/* Limited Promo Tag */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/40 bg-purple-950/60 text-xs font-mono font-bold text-purple-300 mb-6 backdrop-blur-md shadow-lg shadow-purple-950/40">
-            <ZapIcon className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-            <span>SPECIAL PROMO: STARTER @ ₹18 FOR $10 CREDITS</span>
-          </div>
+          {!isExpired && (
+            <div className="inline-flex items-center gap-2 px-4.5 py-2 rounded-full border border-purple-500/50 bg-gradient-to-r from-purple-950/80 via-indigo-950/80 to-purple-950/80 text-xs font-mono font-bold text-purple-200 mb-6 backdrop-blur-md shadow-xl shadow-purple-950/60 ring-1 ring-purple-500/30 animate-pulse">
+              <ZapIcon className="w-4 h-4 text-amber-400 animate-spin" />
+              <span>🔥 NEW USER PROMO: STARTER TRIAL @ ₹19 FOR $10 CREDITS • EXPIRES IN <strong className="text-amber-300 font-bold">{timerText}</strong></span>
+            </div>
+          )}
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight text-white font-heading leading-tight mb-6">
             Predictable INR pricing for <br className="hidden sm:inline" />
             developers & autonomous AI fleets.
           </h1>
           <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto font-light leading-relaxed mb-8">
-            Get instant API key access, $10 rolling limits, and guaranteed AI model credits. Paid safely in INR via <strong className="text-white">Razorpay</strong>.
+            Get instant API key access, rolling limits, and guaranteed AI model credits. Paid safely in INR via <strong className="text-white">Razorpay</strong>.
           </p>
 
           {/* Referral Code Promo Input */}
@@ -455,7 +537,7 @@ export default function PricingPage() {
             <form onSubmit={handleApplyReferral} className="flex gap-2">
               <input
                 type="text"
-                placeholder="Referral Code? (e.g. FRIEND10)"
+                placeholder="Referral Code? (e.g. REF60-MYTHOS)"
                 value={referralCode}
                 onChange={(e) => setReferralCode(e.target.value)}
                 className="flex-1 px-4 py-2 rounded-xl bg-white/[0.05] border border-white/[0.08] text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
@@ -464,7 +546,7 @@ export default function PricingPage() {
                 type="submit"
                 className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs font-mono transition-all"
               >
-                Apply 10% OFF
+                Apply 60% OFF
               </button>
             </form>
             {discountMessage && (
@@ -481,8 +563,8 @@ export default function PricingPage() {
           )}
         </section>
 
-        {/* 8 ELEGANT PRICING CARDS GRID */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
+        {/* PRICING CARDS GRID */}
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
           {plans.map((plan, index) => {
             const isPopular = plan.popular
             const finalPrice = appliedDiscount > 0 ? Math.max(1, Math.round(plan.amountNumber * (1 - appliedDiscount / 100))) : plan.amountNumber
@@ -491,12 +573,19 @@ export default function PricingPage() {
               <div
                 key={index}
                 className={`rounded-2xl p-6 border relative flex flex-col justify-between transition-all duration-300 ${
+                  plan.isTrial ? "pt-8 border-purple-500/70 shadow-2xl shadow-purple-950/70 ring-1 ring-purple-500/40" : ""
+                } ${
                   isPopular
                     ? "bg-gradient-to-b from-[#18142c] to-[#0c0a16] border-purple-500/60 shadow-2xl shadow-purple-950/60 ring-1 ring-purple-500/30 scale-[1.02]"
                     : "bg-[#0b0a13] border-white/[0.08] hover:border-purple-500/30 hover:bg-[#0e0d17]"
                 }`}
               >
-                {/* Header info */}
+                {plan.isTrial && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-[90%] py-1.5 px-3 bg-purple-900 border border-purple-400/40 rounded-full text-[11px] font-mono font-medium text-purple-200 text-center tracking-wider uppercase flex items-center justify-center gap-1.5 z-20">
+                    <ZapIcon className="w-3.5 h-3.5 text-amber-300" />
+                    <span>🔥 LIMITED OFFER • EXPIRES IN <strong className="text-amber-300 font-bold">{timerText}</strong></span>
+                  </div>
+                )}
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <div className="w-8 h-8 rounded-lg bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-purple-400">
@@ -536,6 +625,16 @@ export default function PricingPage() {
                       <span>📅 Weekly: <strong className="text-emerald-300">{plan.limitWeekly}</strong></span>
                     </div>
                   </div>
+
+                  {/* Feature Bullets */}
+                  <ul className="space-y-2 text-xs text-slate-300 font-mono mb-6 pt-4 border-t border-white/[0.06]">
+                    {plan.bullets?.map((b: string, bIdx: number) => (
+                      <li key={bIdx} className="flex items-center gap-2">
+                        <CheckIcon className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" />
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
                 {/* Razorpay Action Button */}
@@ -564,7 +663,7 @@ export default function PricingPage() {
               SIDE BY SIDE
             </span>
             <h2 className="text-3xl sm:text-4xl font-normal text-white font-heading tracking-tight mb-4">
-              Compare all 8 tiers
+              Compare all plans
             </h2>
             <p className="text-slate-400 text-sm leading-relaxed">
               Every plan includes real-time token tracking, rolling limits, instant Razorpay activation, and guaranteed AI model credits.
@@ -601,7 +700,7 @@ export default function PricingPage() {
                       <td
                         key={cIdx}
                         className={`p-4 text-center ${
-                          plans[cIdx].popular ? "bg-purple-950/20" : ""
+                          plans[cIdx]?.popular ? "bg-purple-950/20" : ""
                         }`}
                       >
                         {typeof val === "boolean" ? (
@@ -636,14 +735,14 @@ export default function PricingPage() {
                 Start building on MakeThemBroke today.
               </h2>
               <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
-                Choose Starter at ₹18/mo for $10 USD credits, pay securely via Razorpay, and route every AI request in seconds.
+                Choose your plan, pay securely via Razorpay, and route every AI request in seconds.
               </p>
               <div className="pt-4">
                 <button
                   onClick={() => handlePayment(plans[0])}
                   className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium shadow-xl shadow-purple-950/60 transition-all transform hover:scale-105 active:scale-95"
                 >
-                  Get Starter @ ₹18 (90% OFF)
+                  Get Started with {plans[0]?.name} @ {plans[0]?.inrPrice}
                 </button>
               </div>
             </div>
@@ -672,26 +771,6 @@ export default function PricingPage() {
               <p className="text-xs text-slate-500">
                 Host: <code className="text-purple-300">makethembroke.com</code> • Razorpay Enabled
               </p>
-              <div className="flex items-center gap-3 pt-2">
-                <a
-                  href="https://t.me"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/[0.05] transition-colors"
-                >
-                  <SendIcon className="w-3 h-3 text-sky-400" />
-                  <span>Join Telegram</span>
-                </a>
-                <a
-                  href="https://discord.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/[0.05] transition-colors"
-                >
-                  <MessageSquareIcon className="w-3 h-3 text-indigo-400" />
-                  <span>Join Discord</span>
-                </a>
-              </div>
             </div>
 
             <div className="md:col-span-7 grid grid-cols-3 gap-8">
@@ -738,16 +817,6 @@ export default function PricingPage() {
                       Learn
                     </Link>
                   </li>
-                  <li>
-                    <Link href="/#business" className="hover:text-white transition-colors">
-                      Business
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/#contact" className="hover:text-white transition-colors">
-                      Contact
-                    </Link>
-                  </li>
                 </ul>
               </div>
 
@@ -764,16 +833,6 @@ export default function PricingPage() {
                   <li>
                     <Link href="/#privacy" className="hover:text-white transition-colors">
                       Privacy
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/#refunds" className="hover:text-white transition-colors">
-                      Refunds
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/#cancellation" className="hover:text-white transition-colors">
-                      Cancellation
                     </Link>
                   </li>
                 </ul>

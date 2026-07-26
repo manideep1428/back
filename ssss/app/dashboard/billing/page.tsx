@@ -38,6 +38,14 @@ function PlusIcon(props: React.SVGProps<SVGSVGElement>) {
   )
 }
 
+function ZapIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" {...props}>
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
+  )
+}
+
 export default function BillingPage() {
   const { user } = useUser()
   const stats = useQuery(api.userStats.getUserStats) || {
@@ -61,45 +69,55 @@ export default function BillingPage() {
     }
   }, [])
 
-  const plans = [
+  const [timeLeft, setTimeLeft] = useState({ hours: 5, minutes: 59, seconds: 59 })
+
+  useEffect(() => {
+    const STORAGE_KEY = "starter_promo_expiry_v1"
+    let expiryTime = localStorage.getItem(STORAGE_KEY)
+    if (!expiryTime) {
+      expiryTime = (Date.now() + 6 * 60 * 60 * 1000).toString()
+      localStorage.setItem(STORAGE_KEY, expiryTime)
+    }
+
+    const updateTimer = () => {
+      const now = Date.now()
+      const diff = Math.max(0, parseInt(expiryTime!) - now)
+
+      const h = Math.floor(diff / (1000 * 60 * 60))
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      const s = Math.floor((diff % (1000 * 60)) / 1000)
+
+      setTimeLeft({ hours: h, minutes: m, seconds: s })
+    }
+
+    updateTimer()
+    const timer = setInterval(updateTimer, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const isExpired = timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0
+  const timerText = `${String(timeLeft.hours).padStart(2, "0")}h ${String(timeLeft.minutes).padStart(2, "0")}m ${String(timeLeft.seconds).padStart(2, "0")}s`
+
+  const allPlans = [
     {
       name: "Starter Trial",
-      tag: "80% OFF • FIRST USERS",
+      tag: `🔥 90% OFF • EXPIRES IN ${timerText}`,
       description: "Trial plan for new developers. Includes $10 AI credits.",
       displayPrice: "$10",
-      inrPrice: "₹39",
+      inrPrice: "₹19",
       originalInr: "₹199",
-      amountNumber: 39,
+      amountNumber: 19,
       creditsUsd: 10,
       limit5h: "$10",
       limitWeekly: "$100",
+      isTrial: true,
       bullets: [
         "$10 / 5h - $100 / week included",
-        "80% OFF for first-time users",
+        "90% OFF for first-time users",
         "Access to GPT-5.6-Sol and Opus 5 model routes",
         "Email support - 24h response",
       ],
-      buttonText: "Pay ₹39 and switch to Starter Trial",
-      buttonColor: "bg-purple-600 hover:bg-purple-500 text-white",
-    },
-    {
-      name: "Builder",
-      tag: "80% OFF",
-      description: "For regular work & active dev",
-      displayPrice: "$30",
-      inrPrice: "₹99",
-      originalInr: "₹499",
-      amountNumber: 99,
-      creditsUsd: 30,
-      limit5h: "$15",
-      limitWeekly: "$150",
-      bullets: [
-        "$15 / 5h - $150 / week included",
-        "Access to GPT-5.6-Sol and Opus 5 model routes",
-        "Higher concurrent requests",
-        "Email support - 24h response",
-      ],
-      buttonText: "Pay ₹99 and switch to Builder",
+      buttonText: "Pay ₹19 and switch to Starter Trial",
       buttonColor: "bg-purple-600 hover:bg-purple-500 text-white",
     },
     {
@@ -233,6 +251,8 @@ export default function BillingPage() {
     },
   ]
 
+  const plans = isExpired ? allPlans.filter((p) => !p.isTrial) : allPlans
+
   const handlePayment = async (plan: typeof plans[0]) => {
     setProcessingPlan(plan.name)
 
@@ -364,7 +384,7 @@ export default function BillingPage() {
               BALANCE
             </div>
             <div className="text-4xl font-semibold text-white font-heading tracking-tight">
-              ${(stats.balanceUsd || 0.0).toFixed(2)}
+              ${((stats.balanceUsd || 0.0) + (stats.bonusUsd !== undefined ? stats.bonusUsd : 2.50)).toFixed(2)}
             </div>
             <div className="text-xs text-slate-400 mt-1 font-light">Available for API usage</div>
 
@@ -438,8 +458,18 @@ export default function BillingPage() {
           {plans.map((plan, idx) => (
             <div
               key={idx}
-              className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0a13] flex flex-col justify-between space-y-6 hover:border-purple-500/30 transition-all duration-200"
+              className={`p-6 rounded-2xl border flex flex-col justify-between space-y-6 transition-all duration-200 relative ${
+                plan.isTrial
+                  ? "pt-8 border-purple-500/70 shadow-2xl shadow-purple-950/70 ring-1 ring-purple-500/40 bg-[#0c0a16]"
+                  : "border-white/[0.08] bg-[#0b0a13] hover:border-purple-500/30"
+              }`}
             >
+              {plan.isTrial && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-[90%] py-1.5 px-3 bg-purple-900 border border-purple-400/40 rounded-full text-[11px] font-mono font-medium text-purple-200 text-center tracking-wider uppercase flex items-center justify-center gap-1.5 z-20">
+                  <ZapIcon className="w-3.5 h-3.5 text-amber-300" />
+                  <span>🔥 LIMITED OFFER • EXPIRES IN <strong className="text-amber-300 font-bold">{timerText}</strong></span>
+                </div>
+              )}
               <div className="space-y-4">
                 {/* Header */}
                 <div className="flex items-center justify-between">

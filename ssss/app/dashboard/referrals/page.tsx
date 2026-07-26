@@ -44,10 +44,13 @@ function GiftIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export default function ReferralsPage() {
   const referralData = useQuery(api.referrals.getMyReferrals) || {
-    referralCode: "INVITE10-DEMO",
-    referralLink: "https://makethembroke.com/pricing?ref=INVITE10-DEMO",
+    referralCode: "REF60-DEMO",
+    referralLink: "https://makethembroke.com/pricing?ref=REF60-DEMO",
     totalInvited: 0,
     redeemedCount: 0,
+    maxUses: 3,
+    isExhausted: false,
+    discountPercent: 60,
     list: [],
   }
 
@@ -57,6 +60,7 @@ export default function ReferralsPage() {
   const [friendEmail, setFriendEmail] = useState("")
   const [inviting, setInviting] = useState(false)
   const [inviteSuccess, setInviteSuccess] = useState<string | null>(null)
+  const [inviteError, setInviteError] = useState<string | null>(null)
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(referralData.referralLink)
@@ -69,12 +73,16 @@ export default function ReferralsPage() {
     if (!friendEmail.trim()) return
 
     setInviting(true)
+    setInviteSuccess(null)
+    setInviteError(null)
+
     try {
       await sendInviteMutation({ invitedEmail: friendEmail })
-      setInviteSuccess(`Invitation sent to ${friendEmail}! They get 10% OFF and you earn referral credits.`)
+      setInviteSuccess(`Invitation sent to ${friendEmail}! They get 60% OFF (Max 3 redemptions limit).`)
       setFriendEmail("")
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to send invite:", err)
+      setInviteError(err.message || "Failed to send invitation. Maximum limit reached.")
     } finally {
       setInviting(false)
     }
@@ -87,7 +95,7 @@ export default function ReferralsPage() {
           Invite Friends & Earn Rewards
         </h1>
         <p className="text-xs text-slate-400 font-light mt-1">
-          Invite developers or teams to MakeThemBroke. Each invited friend gets an <strong className="text-purple-300">extra 10% OFF</strong> on every plan purchase, and you earn <strong className="text-emerald-400">10% discount credits</strong> on your next purchase.
+          Invite developers or teams to MakeThemBroke. Each invited friend gets an <strong className="text-purple-300">extra 60% OFF</strong> on plan purchases. Each referral code can be used a <strong className="text-emerald-400">maximum of 3 times</strong> before closing.
         </p>
       </div>
 
@@ -108,7 +116,7 @@ export default function ReferralsPage() {
         <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0c0b13] flex items-center justify-between">
           <div>
             <div className="text-3xl font-semibold text-emerald-400 font-heading">
-              10% OFF
+              60% OFF
             </div>
             <div className="text-xs text-slate-400 mt-1">Discount Per Referral</div>
           </div>
@@ -120,12 +128,12 @@ export default function ReferralsPage() {
         <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0c0b13] flex items-center justify-between">
           <div>
             <div className="text-3xl font-semibold text-purple-300 font-heading">
-              {referralData.redeemedCount}
+              {referralData.redeemedCount} / {referralData.maxUses}
             </div>
-            <div className="text-xs text-slate-400 mt-1">Purchases Completed</div>
+            <div className="text-xs text-slate-400 mt-1">Redemptions Used</div>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-purple-300">
-            ⚡
+          <div className="w-10 h-10 rounded-xl bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-purple-300 font-mono font-bold text-xs">
+            {referralData.isExhausted ? "CLOSED" : `${3 - referralData.redeemedCount} LEFT`}
           </div>
         </div>
       </div>
@@ -137,7 +145,7 @@ export default function ReferralsPage() {
           <div>
             <h3 className="text-base font-medium text-white font-heading">Your unique referral link</h3>
             <p className="text-xs text-slate-400 mt-0.5">
-              Share this link with your friends or team members.
+              Share this link with your friends. Good for 3 redemptions.
             </p>
           </div>
 
@@ -160,7 +168,7 @@ export default function ReferralsPage() {
 
             <div className="pt-2 flex items-center justify-between text-xs font-mono text-slate-500">
               <span>Code: <strong className="text-purple-300">{referralData.referralCode}</strong></span>
-              <span className="text-emerald-400">10% One-time discount</span>
+              <span className="text-emerald-400">60% OFF (Max 3 uses)</span>
             </div>
           </div>
         </div>
@@ -170,7 +178,7 @@ export default function ReferralsPage() {
           <div>
             <h3 className="text-base font-medium text-white font-heading">Invite a friend by email</h3>
             <p className="text-xs text-slate-400 mt-0.5">
-              Enter an email address to send a 10% discount invitation.
+              Enter an email address to send a 60% discount invitation.
             </p>
           </div>
 
@@ -181,11 +189,12 @@ export default function ReferralsPage() {
                 placeholder="friend@company.com"
                 value={friendEmail}
                 onChange={(e) => setFriendEmail(e.target.value)}
-                className="flex-1 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                disabled={referralData.isExhausted}
+                className="flex-1 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 disabled:opacity-50"
               />
               <button
                 type="submit"
-                disabled={inviting || !friendEmail.trim()}
+                disabled={inviting || !friendEmail.trim() || referralData.isExhausted}
                 className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium text-xs font-mono transition-all disabled:opacity-50 shrink-0"
               >
                 {inviting ? "Sending..." : "Send Invite"}
@@ -195,6 +204,11 @@ export default function ReferralsPage() {
             {inviteSuccess && (
               <p className="text-xs font-mono text-emerald-400 bg-emerald-950/40 p-2.5 rounded-lg border border-emerald-500/30">
                 {inviteSuccess}
+              </p>
+            )}
+            {inviteError && (
+              <p className="text-xs font-mono text-amber-400 bg-amber-950/40 p-2.5 rounded-lg border border-amber-500/30">
+                {inviteError}
               </p>
             )}
           </form>
@@ -226,7 +240,7 @@ export default function ReferralsPage() {
                   <tr key={idx} className="hover:bg-white/[0.02]">
                     <td className="py-3 text-white font-medium">{ref.invitedEmail || "Direct Link"}</td>
                     <td className="py-3 text-purple-300">{ref.referralCode}</td>
-                    <td className="py-3 text-emerald-400">10% OFF</td>
+                    <td className="py-3 text-emerald-400">60% OFF</td>
                     <td className="py-3">
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] bg-purple-950/60 text-purple-300 border border-purple-500/30">
                         {ref.status}

@@ -18,38 +18,16 @@ export const validateApiKey = query({
     }
 
     const userId = keyRecord.userId
-    let stats = await ctx.db
+    const stats = await ctx.db
       .query("userStats")
       .withIndex("by_userId", (q) => q.eq("userId", userId))
       .first()
 
-    if (!stats) {
-      // Auto-create initial user stats with welcome $2.50 bonus
-      const statsId = await ctx.db.insert("userStats", {
-        userId,
-        plan: "Starter Trial",
-        bonusUsd: 2.50,
-        balanceUsd: 0.0,
-        usage5h: 0.0,
-        usageWeekly: 0.0,
-        requestsWeekly: 0,
-        tokensWeekly: 0,
-      })
-      stats = {
-        _id: statsId,
-        _creationTime: Date.now(),
-        userId,
-        plan: "Starter Trial",
-        bonusUsd: 2.50,
-        balanceUsd: 0.0,
-        usage5h: 0.0,
-        usageWeekly: 0.0,
-        requestsWeekly: 0,
-        tokensWeekly: 0,
-      }
-    }
+    const bonusUsd = stats ? (stats.bonusUsd ?? 2.50) : 2.50
+    const balanceUsd = stats ? (stats.balanceUsd ?? 0.0) : 0.0
+    const plan = stats ? stats.plan : "Starter Trial"
 
-    const totalBalance = (stats.bonusUsd || 0) + (stats.balanceUsd || 0)
+    const totalBalance = bonusUsd + balanceUsd
     if (totalBalance <= 0) {
       return { valid: false, reason: "Insufficient credit balance. Please add funds to your account." }
     }
@@ -57,9 +35,9 @@ export const validateApiKey = query({
     return {
       valid: true,
       userId,
-      plan: stats.plan,
-      bonusUsd: stats.bonusUsd,
-      balanceUsd: stats.balanceUsd,
+      plan,
+      bonusUsd,
+      balanceUsd,
       totalBalanceUsd: totalBalance,
     }
   },
@@ -89,7 +67,7 @@ export const recordUsageAndDeductCredit = mutation({
     await ctx.db.patch(keyRecord._id, { lastUsed: Date.now() })
 
     const userId = keyRecord.userId
-    const stats = await ctx.db
+    let stats = await ctx.db
       .query("userStats")
       .withIndex("by_userId", (q) => q.eq("userId", userId))
       .first()
@@ -116,6 +94,28 @@ export const recordUsageAndDeductCredit = mutation({
         usageWeekly: Math.round(((stats.usageWeekly || 0) + cost) * 1000000) / 1000000,
         requestsWeekly: (stats.requestsWeekly || 0) + 1,
         tokensWeekly: (stats.tokensWeekly || 0) + totalTokens,
+      })
+    } else {
+      let initialBonus = 2.50
+      let initialBalance = 0.0
+
+      if (initialBonus >= cost) {
+        initialBonus -= cost
+      } else {
+        const diff = cost - initialBonus
+        initialBonus = 0
+        initialBalance = Math.max(0, initialBalance - diff)
+      }
+
+      await ctx.db.insert("userStats", {
+        userId,
+        plan: "Starter Trial",
+        bonusUsd: Math.round(initialBonus * 1000000) / 1000000,
+        balanceUsd: Math.round(initialBalance * 1000000) / 1000000,
+        usage5h: Math.round(cost * 1000000) / 1000000,
+        usageWeekly: Math.round(cost * 1000000) / 1000000,
+        requestsWeekly: 1,
+        tokensWeekly: totalTokens,
       })
     }
 

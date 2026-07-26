@@ -140,36 +140,39 @@ wire_api = "responses"`,
       </div>
 
       {/* Pricing Cards Banner */}
-      <div className="p-6 rounded-2xl border border-purple-500/30 bg-purple-950/20 backdrop-blur-md">
-        <h3 className="text-sm font-mono font-bold text-purple-300 uppercase tracking-wider mb-4 flex items-center gap-2">
-          <span>⚡</span> Live Model Pricing Schedule
+      <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0a13]">
+        <h3 className="text-xs font-mono font-medium text-slate-400 uppercase tracking-wider mb-4">
+          Live Model Pricing Schedule
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-4 rounded-xl border border-white/[0.08] bg-[#0a0812]">
-            <div className="flex items-center justify-between mb-1">
+          <div className="p-4 rounded-xl border border-white/[0.06] bg-[#08070e]">
+            <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-heading font-medium text-white">Opus 5</span>
-              <span className="text-[10px] font-mono text-purple-400 px-2 py-0.5 rounded bg-purple-950/60 border border-purple-500/30">
+              <span className="text-[10px] font-mono text-slate-400 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
                 /v1/anthropic
               </span>
             </div>
-            <p className="text-xs font-mono text-slate-400">
-              Input: <strong className="text-emerald-400">$5.00</strong> / 1M tokens
+            <p className="text-xs font-mono text-slate-400 leading-relaxed">
+              Input: <strong className="text-slate-200 font-semibold">$5.00</strong> / 1M tokens
               <br />
-              Output: <strong className="text-purple-300">$25.00</strong> / 1M tokens
+              Output: <strong className="text-slate-200 font-semibold">$25.00</strong> / 1M tokens
             </p>
           </div>
 
-          <div className="p-4 rounded-xl border border-white/[0.08] bg-[#0a0812]">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-sm font-heading font-medium text-white">GPT-5.6-Sol</span>
-              <span className="text-[10px] font-mono text-amber-400 px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/30">
+          <div className="p-4 rounded-xl border border-amber-500/20 bg-[#08070e] opacity-80 relative overflow-hidden">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-heading font-medium text-white">GPT-5.6-Sol</span>
+                <span className="text-[9px] font-mono text-amber-400 px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/30 uppercase tracking-wider font-bold">
+                  🚧 Under Construction
+                </span>
+              </div>
+              <span className="text-[10px] font-mono text-slate-500 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
                 /v1/openai
               </span>
             </div>
-            <p className="text-xs font-mono text-slate-400">
-              Input: <strong className="text-emerald-400">$5.00</strong> / 1M tokens
-              <br />
-              Output: <strong className="text-amber-300">$15.00</strong> / 1M tokens
+            <p className="text-xs font-mono text-slate-500 leading-relaxed">
+              Endpoint Status: <strong className="text-amber-400 font-semibold">FROZEN / COMING SOON</strong>
             </p>
           </div>
         </div>
@@ -181,22 +184,22 @@ wire_api = "responses"`,
           onClick={() => setActiveTab("claude")}
           className={`p-6 rounded-2xl border text-left transition-all ${
             activeTab === "claude"
-              ? "bg-purple-950/30 border-purple-500/50 shadow-xl shadow-purple-950/40 ring-1 ring-purple-500/30"
-              : "bg-[#0c0b13] border-white/[0.08] hover:border-purple-500/30"
+              ? "bg-white/[0.04] border-purple-500/40 text-white"
+              : "bg-[#0b0a13] border-white/[0.08] hover:border-white/[0.2] text-slate-400"
           }`}
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-900/40 border border-purple-500/30 flex items-center justify-center text-purple-300 font-bold font-mono">
+              <div className="w-10 h-10 rounded-xl bg-purple-950/40 border border-purple-500/30 flex items-center justify-center text-purple-300 font-bold font-mono">
                 CC
               </div>
               <div>
                 <h3 className="font-heading text-lg text-white font-medium">Claude Code</h3>
-                <p className="text-xs text-purple-400 font-mono">/v1/anthropic</p>
+                <p className="text-xs text-purple-300 font-mono">/v1/anthropic</p>
               </div>
             </div>
             {activeTab === "claude" && (
-              <span className="w-2.5 h-2.5 rounded-full bg-purple-400 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-purple-400" />
             )}
           </div>
           <p className="text-xs text-slate-400">
@@ -206,28 +209,33 @@ wire_api = "responses"`,
 
         <button
           onClick={() => setActiveTab("codex")}
-          className={`p-6 rounded-2xl border text-left transition-all ${
+          className={`p-6 rounded-2xl border text-left transition-all relative overflow-hidden ${
             activeTab === "codex"
-              ? "bg-purple-950/30 border-purple-500/50 shadow-xl shadow-purple-950/40 ring-1 ring-purple-500/30"
-              : "bg-[#0c0b13] border-white/[0.08] hover:border-purple-500/30"
+              ? "bg-amber-950/20 border-amber-500/40 text-white"
+              : "bg-[#0b0a13] border-white/[0.08] hover:border-amber-500/30 text-slate-400"
           }`}
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-900/40 border border-amber-500/30 flex items-center justify-center text-amber-300 font-bold font-mono">
+              <div className="w-10 h-10 rounded-xl bg-amber-950/40 border border-amber-500/30 flex items-center justify-center text-amber-300 font-bold font-mono">
                 CX
               </div>
               <div>
-                <h3 className="font-heading text-lg text-white font-medium">Codex CLI</h3>
-                <p className="text-xs text-amber-400 font-mono">/v1/openai</p>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-heading text-lg text-white font-medium">Codex CLI</h3>
+                  <span className="text-[9px] font-mono text-amber-300 px-2 py-0.5 rounded bg-amber-950/80 border border-amber-500/40 font-bold uppercase">
+                    🚧 UNDER CONSTRUCTION
+                  </span>
+                </div>
+                <p className="text-xs text-amber-400/80 font-mono">/v1/openai (Frozen)</p>
               </div>
             </div>
             {activeTab === "codex" && (
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-amber-400" />
             )}
           </div>
           <p className="text-xs text-slate-400">
-            OpenAI & GPT-5.6-sol agent setup with streaming response routing.
+            OpenAI Codex gateway endpoint is currently under construction and frozen.
           </p>
         </button>
       </div>
@@ -252,6 +260,16 @@ wire_api = "responses"`,
 
       {/* Steps Walkthrough */}
       <div className="space-y-12">
+        {activeTab === "codex" && (
+          <div className="p-6 rounded-2xl border border-amber-500/30 bg-amber-950/20 text-center space-y-2 mb-8">
+            <div className="text-2xl">🚧</div>
+            <h3 className="text-lg font-heading font-medium text-white">Codex CLI Gateway Under Construction</h3>
+            <p className="text-xs text-slate-400 max-w-xl mx-auto font-sans leading-relaxed">
+              The OpenAI / Codex endpoint (<code className="text-amber-300 font-mono">/v1/openai</code>) is currently frozen and under construction. Please use <strong>Claude Code</strong> (<code className="text-purple-300 font-mono">/v1/anthropic</code>) which is 100% operational!
+            </p>
+          </div>
+        )}
+
         {activeSteps.map((step, idx) => (
           <div key={idx} className="flex gap-6 group">
             <div className="flex-shrink-0">

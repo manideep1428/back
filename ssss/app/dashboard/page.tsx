@@ -3,6 +3,24 @@
 import { useQuery } from "convex/react"
 import { api } from "@/convex/_generated/api"
 
+function CreditCardIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" {...props}>
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <line x1="2" y1="10" x2="22" y2="10" />
+    </svg>
+  )
+}
+
+function ClockIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" {...props}>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  )
+}
+
 export default function DashboardUsagePage() {
   const stats = useQuery(api.stats.getUserStats) || {
     plan: "No Plan",
@@ -33,10 +51,10 @@ export default function DashboardUsagePage() {
             <div className="text-3xl font-semibold text-white font-heading tracking-tight">
               ${(stats.bonusUsd + stats.balanceUsd).toFixed(2)}
             </div>
-            <div className="text-xs text-slate-400 mt-1">Bonus + balance</div>
+            <div className="text-xs text-slate-400 mt-1">Account Balance</div>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold">
-            💳
+          <div className="w-10 h-10 rounded-xl bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-purple-400">
+            <CreditCardIcon className="w-5 h-5 text-purple-400" />
           </div>
         </div>
 
@@ -47,8 +65,8 @@ export default function DashboardUsagePage() {
             </div>
             <div className="text-xs text-slate-400 mt-1">5h allowance</div>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold">
-            ⏱️
+          <div className="w-10 h-10 rounded-xl bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-purple-400">
+            <ClockIcon className="w-5 h-5 text-purple-400" />
           </div>
         </div>
       </div>

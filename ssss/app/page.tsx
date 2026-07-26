@@ -1,9 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Authenticated, Unauthenticated } from "convex/react"
-import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
+import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs"
 
 // Inline Icon Components for 100% reliability and zero-dependency rendering
 function CpuIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -110,10 +109,40 @@ function MessageSquareIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export default function Page() {
+  const { isSignedIn } = useUser()
   const [copied, setCopied] = useState(false)
   const [activeTab, setActiveTab] = useState<"json" | "python" | "curl">("json")
   const [agentCount, setAgentCount] = useState(7)
   const [simulating, setSimulating] = useState(false)
+
+  const [timeLeft, setTimeLeft] = useState({ hours: 5, minutes: 59, seconds: 59 })
+
+  useEffect(() => {
+    const STORAGE_KEY = "starter_promo_expiry_v1"
+    let expiryTime = localStorage.getItem(STORAGE_KEY)
+    if (!expiryTime) {
+      expiryTime = (Date.now() + 6 * 60 * 60 * 1000).toString()
+      localStorage.setItem(STORAGE_KEY, expiryTime)
+    }
+
+    const updateTimer = () => {
+      const now = Date.now()
+      const diff = Math.max(0, parseInt(expiryTime!) - now)
+
+      const h = Math.floor(diff / (1000 * 60 * 60))
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      const s = Math.floor((diff % (1000 * 60)) / 1000)
+
+      setTimeLeft({ hours: h, minutes: m, seconds: s })
+    }
+
+    updateTimer()
+    const timer = setInterval(updateTimer, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const isExpired = timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0
+  const timerText = `${String(timeLeft.hours).padStart(2, "0")}h ${String(timeLeft.minutes).padStart(2, "0")}m ${String(timeLeft.seconds).padStart(2, "0")}s`
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -204,28 +233,30 @@ print("Real-time cost (INR):", response.cost_inr)`,
 
           {/* Right Action */}
           <div className="flex items-center gap-3">
-            <Unauthenticated>
-              <SignInButton mode="modal">
-                <button className="text-sm font-medium text-slate-300 hover:text-white transition-colors px-3 py-2">
-                  Log in
-                </button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <button className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-white text-slate-950 hover:bg-slate-200 transition-all shadow-md shadow-white/5 active:scale-95">
-                  Get started
-                </button>
-              </SignUpButton>
-            </Unauthenticated>
-
-            <Authenticated>
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-purple-600 hover:bg-purple-500 text-white transition-all shadow-md shadow-purple-900/30"
-              >
-                Dashboard
-              </Link>
-              <UserButton />
-            </Authenticated>
+            {isSignedIn ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-purple-600 hover:bg-purple-500 text-white transition-all shadow-md shadow-purple-900/30"
+                >
+                  Dashboard
+                </Link>
+                <UserButton />
+              </>
+            ) : (
+              <>
+                <SignInButton mode="modal">
+                  <button className="text-sm font-medium text-slate-300 hover:text-white transition-colors px-3 py-2">
+                    Log in
+                  </button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <button className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-sm font-medium bg-white text-slate-950 hover:bg-slate-200 transition-all shadow-md shadow-white/5 active:scale-95">
+                    Get started
+                  </button>
+                </SignUpButton>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -234,13 +265,18 @@ print("Real-time cost (INR):", response.cost_inr)`,
         {/* HERO SECTION */}
         <section className="text-center max-w-4xl mx-auto pt-6 pb-16 flex flex-col items-center">
           {/* Announcement pill */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-purple-500/30 bg-purple-950/40 text-xs font-medium text-purple-300 mb-8 backdrop-blur-md hover:border-purple-500/50 transition-colors cursor-pointer group">
-            <span className="bg-purple-500 text-slate-950 font-bold px-1.5 py-0.5 rounded text-[10px] tracking-wider uppercase">
-              NEW
-            </span>
-            <span>How routing algorithm v2 works</span>
-            <ArrowRightIcon className="w-3.5 h-3.5 text-purple-400 group-hover:translate-x-0.5 transition-transform" />
-          </div>
+          {!isExpired && (
+            <Link
+              href="/pricing"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/30 bg-purple-950/40 text-xs font-mono font-medium text-purple-200 mb-8 backdrop-blur-md hover:border-purple-400/50 transition-all cursor-pointer group"
+            >
+              <span className="bg-amber-400/90 text-slate-950 font-bold px-2 py-0.5 rounded text-[10px] tracking-wider uppercase">
+                90% OFF
+              </span>
+              <span>🔥 STARTER TRIAL @ ₹19 FOR $10 CREDITS • EXPIRES IN <strong className="text-amber-300 font-semibold">{timerText}</strong></span>
+              <ArrowRightIcon className="w-3.5 h-3.5 text-purple-300 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          )}
 
           {/* Hero Headline */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-normal tracking-tight text-white font-heading leading-[1.08] mb-6">
