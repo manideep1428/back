@@ -62,12 +62,7 @@ export function forceRefreshKiroToken() {
  * Retrieves active Kiro token & profile ARN automatically
  */
 export function getLiveKiroCredentials(): { authToken: string; profileArn: string } {
-  let authToken = process.env.AUTH_TOKEN || process.env.KIRO_AUTH_TOKEN || process.env.BEARER_TOKEN || '';
   let profileArn = process.env.PROFILE_ARN || process.env.KIRO_PROFILE_ARN || '';
-
-  if (authToken && authToken.trim() !== '') {
-    return { authToken, profileArn };
-  }
 
   const readFromSqlite = () => {
     try {
@@ -115,6 +110,10 @@ export function getLiveKiroCredentials(): { authToken: string; profileArn: strin
   if (creds) {
     return creds;
   }
+
+  let authToken = process.env.AUTH_TOKEN || process.env.KIRO_AUTH_TOKEN || process.env.BEARER_TOKEN || '';
+  return { authToken, profileArn };
+}
 
   try {
     const userHome = process.env.USERPROFILE || process.env.HOME || '';
