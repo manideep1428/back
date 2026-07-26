@@ -1,0 +1,16 @@
+{
+  "name": "back",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "convex": "^1.42.3",
+    "dotenv": "^17.4.2"
+  }
+}

@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  hono-ai-gateway:
+    build: .
+    container_name: makethembroke-hono-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DOMAIN=makethembroke.com
+      - BACKEND_URL=https://runtime.us-east-1.kiro.dev
+      - MODEL_ID=gpt-5.6-sol
+      - AGENT_MODE=default
+    restart: always
