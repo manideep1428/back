@@ -154,19 +154,21 @@ wire_api = "responses"`,
 
       {/* Pricing Cards Banner */}
       <div className="p-6 rounded-2xl border border-white/[0.08] bg-[#0b0a13]">
-
+        <h3 className="text-xs font-mono font-medium text-slate-400 uppercase tracking-wider mb-4">
+          Live Model Token Rates (Cost per 1M Tokens)
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <div className="p-4 rounded-xl border border-purple-500/30 bg-[#090812]">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-heading font-medium text-white">claude-opus-5</span>
               <span className="text-[10px] font-mono text-purple-300 px-2 py-0.5 rounded bg-purple-950/60 border border-purple-500/30 font-bold">
-                DEFAULT (2.20x)
+                DEFAULT
               </span>
             </div>
             <p className="text-xs font-mono text-slate-400 leading-relaxed">
-              Context: <strong className="text-slate-200">1M window</strong>
+              In: <strong className="text-slate-200">$5.00</strong> / 1M | Out: <strong className="text-slate-200">$25.00</strong> / 1M
               <br />
-              Routing: <strong className="text-purple-300">/v1/anthropic</strong>
+              Context: <strong className="text-purple-300">1M window</strong>
             </p>
           </div>
 
@@ -174,11 +176,11 @@ wire_api = "responses"`,
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-heading font-medium text-white">claude-sonnet-5</span>
               <span className="text-[10px] font-mono text-slate-400 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
-                1.30x credits
+                1M Context
               </span>
             </div>
             <p className="text-xs font-mono text-slate-400 leading-relaxed">
-              Context: <strong className="text-slate-200">1M window</strong>
+              In: <strong className="text-slate-200">$3.00</strong> / 1M | Out: <strong className="text-slate-200">$15.00</strong> / 1M
               <br />
               Routing: <strong className="text-purple-300">/v1/anthropic</strong>
             </p>
@@ -188,11 +190,11 @@ wire_api = "responses"`,
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-heading font-medium text-white">claude-opus-4.8</span>
               <span className="text-[10px] font-mono text-slate-400 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
-                2.20x credits
+                1M Context
               </span>
             </div>
             <p className="text-xs font-mono text-slate-400 leading-relaxed">
-              Context: <strong className="text-slate-200">1M window</strong>
+              In: <strong className="text-slate-200">$5.00</strong> / 1M | Out: <strong className="text-slate-200">$25.00</strong> / 1M
               <br />
               Routing: <strong className="text-purple-300">/v1/anthropic</strong>
             </p>
@@ -202,13 +204,13 @@ wire_api = "responses"`,
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-heading font-medium text-white">gpt-5.6-sol</span>
               <span className="text-[10px] font-mono text-amber-300 px-2 py-0.5 rounded bg-amber-950/40 border border-amber-500/20">
-                2.40x credits
+                Reasoning
               </span>
             </div>
             <p className="text-xs font-mono text-slate-400 leading-relaxed">
-              Context: <strong className="text-slate-200">272k window</strong>
+              In: <strong className="text-slate-200">$5.00</strong> / 1M | Out: <strong className="text-slate-200">$15.00</strong> / 1M
               <br />
-              Routing: <strong className="text-amber-300">Supported</strong>
+              Context: <strong className="text-amber-300">272k window</strong>
             </p>
           </div>
 
@@ -216,13 +218,13 @@ wire_api = "responses"`,
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-heading font-medium text-white">gpt-5.6-luna</span>
               <span className="text-[10px] font-mono text-emerald-400 px-2 py-0.5 rounded bg-emerald-950/40 border border-emerald-500/20">
-                0.60x credits
+                Economical
               </span>
             </div>
             <p className="text-xs font-mono text-slate-400 leading-relaxed">
-              Context: <strong className="text-slate-200">272k window</strong>
+              In: <strong className="text-slate-200">$1.50</strong> / 1M | Out: <strong className="text-slate-200">$6.00</strong> / 1M
               <br />
-              Routing: <strong className="text-emerald-400">Economical</strong>
+              Context: <strong className="text-emerald-400">272k window</strong>
             </p>
           </div>
 
@@ -230,13 +232,13 @@ wire_api = "responses"`,
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-heading font-medium text-white">auto</span>
               <span className="text-[10px] font-mono text-slate-300 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
-                1.00x credits
+                Auto-Select
               </span>
             </div>
             <p className="text-xs font-mono text-slate-400 leading-relaxed">
-              Context: <strong className="text-slate-200">Dynamic</strong>
+              In: <strong className="text-slate-200">$3.00</strong> / 1M | Out: <strong className="text-slate-200">$12.00</strong> / 1M
               <br />
-              Routing: <strong className="text-slate-300">Optimal Task Choice</strong>
+              Routing: <strong className="text-slate-300">Optimal Choice</strong>
             </p>
           </div>
         </div>
@@ -247,8 +249,8 @@ wire_api = "responses"`,
         <button
           onClick={() => setActiveTab("claude")}
           className={`p-6 rounded-2xl border text-left transition-all ${activeTab === "claude"
-              ? "bg-white/[0.04] border-purple-500/40 text-white"
-              : "bg-[#0b0a13] border-white/[0.08] hover:border-white/[0.2] text-slate-400"
+            ? "bg-white/[0.04] border-purple-500/40 text-white"
+            : "bg-[#0b0a13] border-white/[0.08] hover:border-white/[0.2] text-slate-400"
             }`}
         >
           <div className="flex items-center justify-between mb-3">
@@ -273,8 +275,8 @@ wire_api = "responses"`,
         <button
           onClick={() => setActiveTab("codex")}
           className={`p-6 rounded-2xl border text-left transition-all relative overflow-hidden ${activeTab === "codex"
-              ? "bg-amber-950/20 border-amber-500/40 text-white"
-              : "bg-[#0b0a13] border-white/[0.08] hover:border-amber-500/30 text-slate-400"
+            ? "bg-amber-950/20 border-amber-500/40 text-white"
+            : "bg-[#0b0a13] border-white/[0.08] hover:border-amber-500/30 text-slate-400"
             }`}
         >
           <div className="flex items-center justify-between mb-3">
@@ -310,8 +312,8 @@ wire_api = "responses"`,
             key={platform}
             onClick={() => setOs(platform)}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-mono capitalize transition-all ${os === platform
-                ? "bg-white/10 text-white border border-white/20"
-                : "text-slate-400 hover:text-slate-200"
+              ? "bg-white/10 text-white border border-white/20"
+              : "text-slate-400 hover:text-slate-200"
               }`}
           >
             {platform === "mac" ? "macOS" : platform}
