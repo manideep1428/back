@@ -228,19 +228,7 @@ wire_api = "responses"`,
             </p>
           </div>
 
-          <div className="p-4 rounded-xl border border-white/[0.06] bg-[#08070e]">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-heading font-medium text-white">auto</span>
-              <span className="text-[10px] font-mono text-slate-300 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
-                Auto-Select
-              </span>
-            </div>
-            <p className="text-xs font-mono text-slate-400 leading-relaxed">
-              In: <strong className="text-slate-200">$3.00</strong> / 1M | Out: <strong className="text-slate-200">$12.00</strong> / 1M
-              <br />
-              Routing: <strong className="text-slate-300">Optimal Choice</strong>
-            </p>
-          </div>
+
         </div>
       </div>
 

@@ -29,7 +29,7 @@ export const validateApiKey = query({
 
     const totalBalance = bonusUsd + balanceUsd
     if (totalBalance <= 0) {
-      return { valid: false, reason: "Insufficient credit balance. Please add funds to your account." }
+      return { valid: false, reason: "Your MakeThemBroke $2.50 trial credit balance has been exhausted ($0.00). Please visit https://makethembroke.com/pricing to add funds to your account." }
     }
 
     return {

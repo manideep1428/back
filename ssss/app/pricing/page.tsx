@@ -150,8 +150,8 @@ export default function PricingPage() {
   const allPlans = [
     {
       name: "Starter Trial",
-      tag: `🔥 90% OFF • EXPIRES IN ${timerText}`,
-      description: "Trial plan for new developers. Includes $10 AI credits.",
+      tag: "🎁 FREE $2.50 TRIAL BALANCE ON SIGNUP",
+      description: "Instant free trial for new developers. Includes $2.50 free AI credits on signup.",
       inrPrice: "₹19",
       originalPrice: "₹199",
       amountNumber: 19,
@@ -161,9 +161,9 @@ export default function PricingPage() {
       popular: false,
       isTrial: true,
       bullets: [
-        "$10 / 5h - $100 / week included",
-        "90% OFF for first-time users",
-        "Access to GPT-5.6-Sol and Opus 5 model routes",
+        "$2.50 FREE trial credits included automatically",
+        "Test Claude Code CLI & model routes with zero payment",
+        "90% OFF for first-time account top-up (@ ₹19)",
         "Email support - 24h response",
       ],
       buttonText: "Get Starter Trial @ ₹19",

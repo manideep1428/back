@@ -124,7 +124,7 @@ async function handleProxyRequest(req: Request): Promise<Response> {
     return new Response(
       JSON.stringify({
         error: {
-          message: validation.reason || "Invalid API key or credit balance exhausted.",
+          message: validation.reason || "Your MakeThemBroke $2.50 trial credit balance has been exhausted ($0.00). Please visit https://makethembroke.com/pricing to add funds to your account.",
           type: "insufficient_quota",
           param: null,
           code: "credit_limit_exceeded",
@@ -178,7 +178,7 @@ async function handleProxyRequest(req: Request): Promise<Response> {
     return new Response(
       JSON.stringify({
         error: {
-          message: `Failed to connect to internal streaming backend: ${err.message}`,
+          message: "MakeThemBroke Gateway Error: Unable to connect to upstream processing server.",
           type: "backend_connection_error",
         },
       }),
@@ -194,11 +194,21 @@ async function handleProxyRequest(req: Request): Promise<Response> {
 
   if (!backendResponse.ok || !backendResponse.body) {
     const errText = await backendResponse.text().catch(() => "");
+    let sanitizedMsg = "MakeThemBroke Gateway Error: Service temporary connection issue.";
+
+    if (backendResponse.status === 402 || errText.includes("credit") || errText.includes("exhausted")) {
+      sanitizedMsg = "Your MakeThemBroke $2.50 trial credit balance has been exhausted ($0.00). Please visit https://makethembroke.com/pricing to add funds to your account.";
+    } else if (backendResponse.status === 403 || errText.includes("Forbidden") || errText.includes("token")) {
+      sanitizedMsg = "MakeThemBroke Gateway Service: Automatic session refresh in progress. Please retry your request in a moment.";
+    } else {
+      sanitizedMsg = `MakeThemBroke Gateway Service Error (${backendResponse.status}). Please check your account status at https://makethembroke.com/dashboard.`;
+    }
+
     return new Response(
       JSON.stringify({
         error: {
-          message: `Streaming backend returned error (${backendResponse.status}): ${errText}`,
-          type: "backend_error",
+          message: sanitizedMsg,
+          type: "gateway_error",
         },
       }),
       {
