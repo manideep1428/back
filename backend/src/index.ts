@@ -76,30 +76,32 @@ export function getLiveKiroCredentials(): { authToken: string; profileArn: strin
         path.join(userHome, 'AppData', 'Local', 'Kiro-Cli', 'data.sqlite3'),
         path.join(userHome, '.local', 'share', 'Kiro-Cli', 'data.sqlite3'),
         path.join(userHome, '.config', 'Kiro-Cli', 'data.sqlite3'),
+        path.join(userHome, '.kiro', 'data.sqlite3'),
+        '/home/ubuntu/.local/share/Kiro-Cli/data.sqlite3',
+        '/home/ubuntu/.config/Kiro-Cli/data.sqlite3',
+        '/root/.local/share/Kiro-Cli/data.sqlite3',
+        '/root/.config/Kiro-Cli/data.sqlite3',
+        '/home/ec2-user/.local/share/Kiro-Cli/data.sqlite3',
       ];
 
       const dbPath = candidatePaths.find((p) => fs.existsSync(p));
       if (dbPath) {
         const pythonBin = process.platform === 'win32' ? 'python' : 'python3';
-        const pyCmd = `${pythonBin} -c "import sqlite3; conn = sqlite3.connect(r'${dbPath}'); row = conn.execute(\\\"SELECT value FROM auth_kv WHERE key='kirocli:social:token'\\\").fetchone(); print(row[0] if row else '')"`;
+        const pyCmd = `${pythonBin} -c "import sqlite3, json; conn = sqlite3.connect(r'${dbPath}'); rows = conn.execute(\\\"SELECT value FROM auth_kv WHERE key LIKE '%token%'\\\").fetchall(); tokens = [r[0] for r in rows if r[0]]; print(tokens[0] if tokens else '')"`;
         const output = execSync(pyCmd, { encoding: 'utf-8' }).trim();
         if (output) {
           const parsed = JSON.parse(output);
-          if (parsed.access_token) {
-            const expiresAt = parsed.expires_at ? new Date(parsed.expires_at).getTime() : 0;
-            const now = Date.now();
-            if (expiresAt && now >= expiresAt - 60000) {
-              return null;
-            }
+          const token = parsed.access_token || parsed.accessToken || parsed.token || parsed.id_token;
+          if (token) {
             return {
-              authToken: parsed.access_token,
-              profileArn: parsed.profile_arn || profileArn
+              authToken: token,
+              profileArn: parsed.profile_arn || parsed.profileArn || profileArn,
             };
           }
         }
       }
-    } catch {
-      // Ignore
+    } catch (err: any) {
+      console.error('Error reading SQLite Kiro token:', err?.message);
     }
     return null;
   };
