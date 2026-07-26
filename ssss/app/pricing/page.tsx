@@ -512,16 +512,18 @@ export default function PricingPage() {
       <main className="max-w-7xl mx-auto px-6 pt-12 pb-24">
         {/* HERO SECTION */}
         <section className="text-center max-w-4xl mx-auto pt-6 pb-12">
-          {/* High Traffic Demand Alert Banner */}
-          <div className="max-w-2xl mx-auto mb-8 p-4 rounded-xl bg-[#0b0a13] border border-white/[0.08] text-center">
-            <div className="flex items-center justify-center gap-2 text-amber-400 font-mono text-xs font-medium uppercase tracking-wider mb-1">
-              <span className="w-2 h-2 rounded-full bg-amber-400" />
-              <span>High Traffic & Demand Notice</span>
+          {/* High Traffic Demand Alert Banner - Only shown to signed-in users */}
+          {isSignedIn && (
+            <div className="max-w-2xl mx-auto mb-8 p-4 rounded-xl bg-[#0b0a13] border border-white/[0.08] text-center">
+              <div className="flex items-center justify-center gap-2 text-amber-400 font-mono text-xs font-medium uppercase tracking-wider mb-1">
+                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                <span>High Traffic & Demand Notice</span>
+              </div>
+              <p className="text-slate-400 text-xs font-mono leading-relaxed max-w-xl mx-auto">
+                Gateway capacity is currently under high demand. Plan top-ups are temporarily marked as <strong className="text-white font-semibold">SOLD OUT</strong>. Registered users will receive an email as soon as new capacity opens up.
+              </p>
             </div>
-            <p className="text-slate-400 text-xs font-mono leading-relaxed max-w-xl mx-auto">
-              Gateway capacity is currently under high demand. Plan top-ups are temporarily marked as <strong className="text-white font-semibold">SOLD OUT</strong>. Registered users will receive an email as soon as new capacity opens up.
-            </p>
-          </div>
+          )}
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight text-white font-heading leading-tight mb-6">
             Predictable INR pricing for <br className="hidden sm:inline" />
@@ -572,11 +574,13 @@ export default function PricingPage() {
                 key={index}
                 className="rounded-2xl p-6 border border-white/[0.08] bg-[#0b0a13] relative flex flex-col justify-between"
               >
-                {/* Sold Out Badge */}
-                <div className="absolute -top-3.5 right-4 px-3 py-1 bg-[#050508] border border-white/[0.08] rounded-full text-[10px] font-mono font-medium text-amber-400 uppercase tracking-widest flex items-center gap-1.5 z-20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                  <span>SOLD OUT</span>
-                </div>
+                {/* Sold Out Badge (Only shown to signed-in users) */}
+                {isSignedIn && (
+                  <div className="absolute -top-3.5 right-4 px-3 py-1 bg-[#050508] border border-white/[0.08] rounded-full text-[10px] font-mono font-medium text-amber-400 uppercase tracking-widest flex items-center gap-1.5 z-20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                    <span>SOLD OUT</span>
+                  </div>
+                )}
 
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -585,7 +589,7 @@ export default function PricingPage() {
                     </div>
                     {plan.tag && (
                       <span className="text-[9px] font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border bg-white/[0.04] text-slate-400 border-white/[0.06]">
-                        HIGH CAPACITY DEMAND
+                        {isSignedIn ? "HIGH CAPACITY DEMAND" : plan.tag}
                       </span>
                     )}
                   </div>
@@ -621,17 +625,27 @@ export default function PricingPage() {
                   </ul>
                 </div>
 
-                {/* Sold Out Action Button */}
+                {/* Action Button */}
                 <div className="pt-4 border-t border-white/[0.05]">
-                  <button
-                    disabled
-                    className="w-full inline-flex items-center justify-center py-3 rounded-xl text-xs font-mono font-medium bg-white/[0.04] text-slate-400 border border-white/[0.06] cursor-not-allowed uppercase tracking-wider"
-                  >
-                    <span>CAPACITY FULL • SOLD OUT</span>
-                  </button>
-                  <p className="text-[10px] font-mono text-slate-500 text-center mt-2">
-                    Registered accounts will be emailed when capacity reopens.
-                  </p>
+                  {isSignedIn ? (
+                    <>
+                      <button
+                        disabled
+                        className="w-full inline-flex items-center justify-center py-3 rounded-xl text-xs font-mono font-medium bg-white/[0.04] text-slate-400 border border-white/[0.06] cursor-not-allowed uppercase tracking-wider"
+                      >
+                        <span>CAPACITY FULL • SOLD OUT</span>
+                      </button>
+                      <p className="text-[10px] font-mono text-slate-500 text-center mt-2">
+                        Registered accounts will be emailed when capacity reopens.
+                      </p>
+                    </>
+                  ) : (
+                    <SignUpButton mode="modal">
+                      <button className="w-full inline-flex items-center justify-center py-3 rounded-xl text-xs font-medium font-mono bg-purple-600 hover:bg-purple-500 text-white transition-all">
+                        Sign up to access {plan.name} @ ₹{finalPrice}
+                      </button>
+                    </SignUpButton>
+                  )}
                 </div>
               </div>
             )
