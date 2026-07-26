@@ -65,27 +65,25 @@ export function DocsContent() {
     {
       num: "03",
       title: "Complete ~/.claude/settings.json Configuration",
-      desc: "Create or edit ~/.claude/settings.json in your home directory with all environment variables, default model, and supported model options in one single file.",
+      desc: "Create or edit ~/.claude/settings.json in your home directory with your MakeThemBroke API key, endpoint URL, and chosen model.",
       code: `{
   "env": {
     "ANTHROPIC_BASE_URL": "https://api.makethembroke.com/v1/anthropic",
     "ANTHROPIC_API_KEY": "${activeKey}",
-    "MODEL_ID": "claude-opus-5"
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+  },
+  "permissions": {
+    "allow": [],
+    "deny": []
   },
   "model": "claude-opus-5",
-  "available_models": [
-    "claude-opus-5",
-    "claude-sonnet-5",
-    "claude-opus-4.8",
-    "gpt-5.6-sol",
-    "gpt-5.6-luna",
-    "auto"
-  ]
+  "effortLevel": "max",
+  "skipDangerousModePermissionPrompt": true
 }`,
       lang: "json",
       note: os === "windows"
-        ? `Windows path: C:\\Users\\YOUR_USER\\.claude\\settings.json (or run in PowerShell: $env:ANTHROPIC_BASE_URL="https://api.makethembroke.com/v1/anthropic"; $env:ANTHROPIC_API_KEY="${activeKey}")`
-        : `Mac/Linux path: ~/.claude/settings.json (or run in Terminal: export ANTHROPIC_BASE_URL="https://api.makethembroke.com/v1/anthropic"; export ANTHROPIC_API_KEY="${activeKey}")`,
+        ? `Windows path: C:\\Users\\YOUR_USER\\.claude\\settings.json. Supported models for "model": "claude-opus-5" (default), "claude-sonnet-5", "claude-opus-4.8", "gpt-5.6-sol", "gpt-5.6-luna", "auto".`
+        : `Mac/Linux path: ~/.claude/settings.json. Supported models for "model": "claude-opus-5" (default), "claude-sonnet-5", "claude-opus-4.8", "gpt-5.6-sol", "gpt-5.6-luna", "auto".`,
     },
     {
       num: "04",
